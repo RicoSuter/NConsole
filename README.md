@@ -1,6 +1,14 @@
-NConsole is a simple .NET library to execute commands given some command line arguments. If the command name or some non-optional parameters are missing, the library automatically switches to an interactive mode where the user is prompted to enter the missing parameters. Using descriptive attributes on the command class and its parameters, a nicely formatted help page can be generated.  
+NConsole is a .NET library to parse command line arguments and execute commands. If the command name or some non-optional parameters are missing, the library automatically switches to an interactive mode where the user is prompted to enter the missing parameters. Using descriptive attributes on the command class and its parameters, a nicely formatted help page can be generated.  
 
 To use the library, install the [NuGet package 'NConsole'](https://www.nuget.org/packages/NConsole/). 
+
+Features: 
+
+- Interactive mode when parameters are missing
+- Customizable parameter reading
+- Automatically generated help page
+- Support for optional parameters
+- Dependency injection to inject services into command instances
 
 ## Usage
 
