@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <authors>$author$</authors>
+        <description>$description$</description>
+        <projectUrl>https://github.com/NConsole/NConsole</projectUrl>
+        <licenseUrl>https://github.com/NConsole/NConsole/blob/master/LICENSE.md</licenseUrl>
+    </metadata>
+    <files>
+        <file src="bin\Release\NConsole.dll" target="lib\net45" />
+        <file src="bin\Release\NConsole.xml" target="lib\net45" />
+    </files>
+</package>
