@@ -4,6 +4,8 @@ To use the library, install the [NuGet package 'NConsole'](https://www.nuget.org
 
 ## Usage
 
+The usage is simple: Create an instance of the `CommandLineProcessor` class, register the commands and execute a command by calling the `ProcessAsync()` method with the command line arguments. 
+
     namespace MyApplication
     {
         class Program
@@ -12,7 +14,7 @@ To use the library, install the [NuGet package 'NConsole'](https://www.nuget.org
             {
                 var processor = new CommandLineProcessor(new CommandLineHost());
                 processor.AddCommand<SumCommand>("sum");
-                processor.Process(args);
+                processor.ProcessAsync(args).Result;
             }
         }
 
