@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("NConsole")]
-[assembly: AssemblyDescription(".NET library to parse command line arguments and execute commands.")]
+[assembly: AssemblyDescription("NConsole is a .NET library to parse command line arguments and execute commands.")]
 [assembly: AssemblyCompany("Rico Suter")]
 [assembly: AssemblyProduct("NConsole")]
 [assembly: AssemblyCopyright("Copyright © Rico Suter, 2015")]
