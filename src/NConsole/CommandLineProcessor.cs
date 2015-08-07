@@ -12,12 +12,12 @@ namespace NConsole
     {
         private readonly ICommandLineHost _commandLineHost;
         private readonly Dictionary<string, Type> _commands = new Dictionary<string, Type>();
-        private IDependencyResolver _dependencyResolver;
+        private readonly IDependencyResolver _dependencyResolver;
 
         /// <summary>Initializes a new instance of the <see cref="CommandLineProcessor" /> class.</summary>
         /// <param name="commandLineHost">The command line host.</param>
         /// <param name="dependencyResolver">The dependency resolver.</param>
-        public CommandLineProcessor(ICommandLineHost commandLineHost, IDependencyResolver dependencyResolver)
+        public CommandLineProcessor(ICommandLineHost commandLineHost, IDependencyResolver dependencyResolver = null)
         {
             _commandLineHost = commandLineHost;
             _dependencyResolver = dependencyResolver; 
@@ -50,6 +50,7 @@ namespace NConsole
 
         /// <summary>Processes the command in the given command line arguments.</summary>
         /// <param name="args">The arguments.</param>
+        /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
         public async Task ProcessAsync(string[] args)
         {
             var commandName = GetCommandName(args);
@@ -93,9 +94,13 @@ namespace NConsole
             return null;
         }
 
+        /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
         private ICommandLineCommand CreateCommand(Type commandType)
         {
             var constructor = commandType.GetConstructors().First();
+
+            if (constructor.GetParameters().Length > 0 && _dependencyResolver == null)
+                throw new InvalidOperationException("No dependency resolver available to create a command without default constructor.");
 
             var parameters = constructor.GetParameters()
                 .Select(param => _dependencyResolver.GetService(param.ParameterType))

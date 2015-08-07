@@ -77,6 +77,20 @@ namespace NConsole.Tests
             //// Assert
             Assert.AreEqual(123.ToString(), resolver.MyState.State.ToString());
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public async Task When_dependency_resolver_is_missing_and_command_without_default_constructor_then_exception_is_thrown()
+        {
+            //// Arrange
+            var processor = new CommandLineProcessor(new CommandLineHost());
+            processor.AddCommand<MyParameterCommand>("test");
+
+            //// Act
+            await processor.ProcessAsync(new string[] { "test" });
+
+            //// Assert
+        }
     }
 
     public class MyDependencyResolver : IDependencyResolver
