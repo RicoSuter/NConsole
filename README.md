@@ -35,14 +35,12 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
         }
     }
 
-The command can now be called this way: 
+The command `sum` can now be executed using the following command line call: 
 
     MyApplication.exe sum /firstvalue:5 /secondvalue:6
+    Output: 11
     
-Output: 11
-    
-With the optional parameter: 
+The `SecondValue` has a default value and is therefore optional. This parameter is not required: 
 
     MyApplication.exe sum /firstvalue:5
-    
-Output: 15
+    Output: 15
