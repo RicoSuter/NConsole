@@ -22,7 +22,7 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
             {
                 var processor = new CommandLineProcessor(new CommandLineHost());
                 processor.AddCommand<SumCommand>("sum");
-                processor.ProcessAsync(args).Result;
+                processor.ProcessAsync(args).Wait();
             }
         }
 
