@@ -137,6 +137,7 @@ namespace NConsole.Tests
             _state = state;
         }
 
+        [Argument(Name = "UInt16")]
         public UInt16 UInt16 { get; set; }
         //public UInt32 UInt32 { get; set; }
         //public UInt64 UInt64 { get; set; }

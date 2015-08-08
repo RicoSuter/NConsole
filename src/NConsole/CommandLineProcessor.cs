@@ -61,9 +61,12 @@ namespace NConsole
 
                 foreach (var property in commandType.GetRuntimeProperties())
                 {
-                    var parameter = property.Name.ToLowerInvariant();
-                    var value = GetParameterValue(args, property, parameter);
-                    property.SetValue(command, value);
+                    var argumentAttribute = property.GetCustomAttribute<ArgumentAttributeBase>();
+                    if (argumentAttribute != null)
+                    {
+                        var value = argumentAttribute.Load(_commandLineHost, args, property);
+                        property.SetValue(command, value);
+                    }
                 }
 
                 await command.RunAsync(this, _commandLineHost);
@@ -82,18 +85,6 @@ namespace NConsole
             return args[0].ToLowerInvariant();
         }
 
-        /// <summary>Gets the parameter value for the given key.</summary>
-        /// <param name="args">The arguments.</param>
-        /// <param name="key">The key.</param>
-        /// <returns>The parameter value.</returns>
-        protected virtual string GetParameterValue(string[] args, string key)
-        {
-            var arg = args.FirstOrDefault(a => a.StartsWith("/" + key + ":"));
-            if (arg != null)
-                return arg.Substring(arg.IndexOf(":", StringComparison.InvariantCulture) + 1);
-            return null;
-        }
-
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
         private ICommandLineCommand CreateCommand(Type commandType)
         {
@@ -107,49 +98,6 @@ namespace NConsole
                 .ToArray();
 
             return (ICommandLineCommand) constructor.Invoke(parameters);
-        }
-
-        private object GetParameterValue(string[] args, PropertyInfo property, string key)
-        {
-            var value = GetParameterValue(args, key);
-            if (value != null)
-                return ConvertToType(value, property.PropertyType);
-            else
-            {
-                var defaultValueAttribute = property.GetCustomAttribute<DefaultValueAttribute>();
-                if (defaultValueAttribute != null)
-                    return defaultValueAttribute.Value;
-                else
-                    return ConvertToType(_commandLineHost.ReadValue(key), property.PropertyType);
-            }
-        }
-
-        private object ConvertToType(string value, Type type)
-        {
-            if (type == typeof(Int16))
-                return Int16.Parse(value);
-            if (type == typeof(Int32))
-                return Int32.Parse(value);
-            if (type == typeof(Int64))
-                return Int64.Parse(value);
-
-            if (type == typeof(UInt16))
-                return UInt16.Parse(value);
-            if (type == typeof(UInt32))
-                return UInt32.Parse(value);
-            if (type == typeof(UInt64))
-                return UInt64.Parse(value);
-
-            if (type == typeof(Decimal))
-                return Decimal.Parse(value);
-
-            if (type == typeof(Boolean))
-                return Boolean.Parse(value);
-
-            if (type == typeof(DateTime))
-                return DateTime.Parse(value);
-
-            return value;
         }
     }
 }
