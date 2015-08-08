@@ -3,7 +3,7 @@ using System;
 namespace NConsole
 {
     /// <summary>A command line host implementation which uses System.Console.</summary>
-    public class CommandLineHost : ICommandLineHost
+    public class ConsoleHost : IConsoleHost
     {
         /// <summary>Writes a message to the console.</summary>
         /// <param name="message">The message.</param>

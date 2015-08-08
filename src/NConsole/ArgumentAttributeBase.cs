@@ -3,10 +3,20 @@ using System.Reflection;
 
 namespace NConsole
 {
+    /// <summary>The argument attribute base class.</summary>
     public abstract class ArgumentAttributeBase : Attribute
     {
-        public abstract object Load(ICommandLineHost commandLineHost, string[] args, PropertyInfo property);
+        /// <summary>Gets the argument value.</summary>
+        /// <param name="consoleHost">The command line host.</param>
+        /// <param name="args">The arguments.</param>
+        /// <param name="property">The property.</param>
+        /// <returns>The value.</returns>
+        public abstract object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property);
 
+        /// <summary>Converts a string value to a specific type.</summary>
+        /// <param name="value">The value.</param>
+        /// <param name="type">The type.</param>
+        /// <returns>The value.</returns>
         protected object ConvertToType(string value, Type type)
         {
             if (type == typeof(Int16))

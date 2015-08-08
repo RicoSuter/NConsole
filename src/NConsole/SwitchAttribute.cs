@@ -2,13 +2,21 @@
 
 namespace NConsole
 {
+    /// <summary>Attribute to define a switch/boolean attribute.</summary>
     public class SwitchAttribute : ArgumentAttributeBase
     {
+        /// <summary>Gets or sets the short name without the '-' prefix.</summary>
         public string ShortName { get; set; }
 
+        /// <summary>Gets or sets the long name without the '--' prefix.</summary>
         public string LongName { get; set; }
 
-        public override object Load(ICommandLineHost commandLineHost, string[] args, PropertyInfo property)
+        /// <summary>Gets the argument value.</summary>
+        /// <param name="consoleHost">The command line host.</param>
+        /// <param name="args">The arguments.</param>
+        /// <param name="property">The property.</param>
+        /// <returns>The value.</returns>
+        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property)
         {
             foreach (var argument in args)
             {

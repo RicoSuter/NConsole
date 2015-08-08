@@ -11,10 +11,10 @@ namespace NConsole.Tests
         public void When_adding_a_command_then_the_command_is_in_the_commands_list()
         {
             //// Arrange
-            var processor = new CommandLineProcessor(new CommandLineHost(), new MyDependencyResolver());
+            var processor = new CommandLineProcessor(new ConsoleHost(), new MyDependencyResolver());
 
             //// Act
-            processor.AddCommand<MyCommand>("test");
+            processor.RegisterCommand<MyCommand>("test");
 
             //// Assert
             Assert.IsTrue(processor.Commands.ContainsKey("test"));
@@ -25,11 +25,11 @@ namespace NConsole.Tests
         public void When_adding_command_with_same_name_then_exception_is_thrown()
         {
             //// Arrange
-            var processor = new CommandLineProcessor(new CommandLineHost(), new MyDependencyResolver());
-            processor.AddCommand<MyCommand>("Test");
+            var processor = new CommandLineProcessor(new ConsoleHost(), new MyDependencyResolver());
+            processor.RegisterCommand<MyCommand>("Test");
 
             //// Act
-            processor.AddCommand<MyCommand>("test"); // exception
+            processor.RegisterCommand<MyCommand>("test"); // exception
 
             //// Assert
         }
@@ -38,10 +38,10 @@ namespace NConsole.Tests
         public void When_adding_command_with_upper_case_then_it_is_converted_to_lower_case()
         {
             //// Arrange
-            var processor = new CommandLineProcessor(new CommandLineHost(), new MyDependencyResolver());
+            var processor = new CommandLineProcessor(new ConsoleHost(), new MyDependencyResolver());
 
             //// Act
-            processor.AddCommand<MyCommand>("Test");
+            processor.RegisterCommand<MyCommand>("Test");
 
             //// Assert
             Assert.IsFalse(processor.Commands.ContainsKey("Test"));
@@ -53,8 +53,8 @@ namespace NConsole.Tests
         {
             //// Arrange
             var resolver = new MyDependencyResolver(); 
-            var processor = new CommandLineProcessor(new CommandLineHost(), resolver);
-            processor.AddCommand<MyCommand>("test");
+            var processor = new CommandLineProcessor(new ConsoleHost(), resolver);
+            processor.RegisterCommand<MyCommand>("test");
 
             //// Act
             await processor.ProcessAsync(new string[] { "test" });
@@ -68,8 +68,8 @@ namespace NConsole.Tests
         {
             //// Arrange
             var resolver = new MyDependencyResolver();
-            var processor = new CommandLineProcessor(new CommandLineHost(), resolver);
-            processor.AddCommand<MyParameterCommand>("test");
+            var processor = new CommandLineProcessor(new ConsoleHost(), resolver);
+            processor.RegisterCommand<MyParameterCommand>("test");
 
             //// Act
             await processor.ProcessAsync(new string[] { "test", "/uint16:123" });
@@ -83,8 +83,8 @@ namespace NConsole.Tests
         public async Task When_dependency_resolver_is_missing_and_command_without_default_constructor_then_exception_is_thrown()
         {
             //// Arrange
-            var processor = new CommandLineProcessor(new CommandLineHost());
-            processor.AddCommand<MyParameterCommand>("test");
+            var processor = new CommandLineProcessor(new ConsoleHost());
+            processor.RegisterCommand<MyParameterCommand>("test");
 
             //// Act
             await processor.ProcessAsync(new string[] { "test" });
@@ -113,7 +113,7 @@ namespace NConsole.Tests
         public object State { get; set; }
     }
 
-    public class MyCommand : ICommandLineCommand
+    public class MyCommand : IConsoleCommand
     {
         private readonly MyState _state;
 
@@ -122,13 +122,13 @@ namespace NConsole.Tests
             _state = state; 
         }
 
-        public async Task RunAsync(CommandLineProcessor processor, ICommandLineHost host)
+        public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
         {
             _state.State = true;
         }
     }
 
-    public class MyParameterCommand : ICommandLineCommand
+    public class MyParameterCommand : IConsoleCommand
     {
         private readonly MyState _state;
 
@@ -152,7 +152,7 @@ namespace NConsole.Tests
 
         //public DateTime DateTime { get; set; }
 
-        public async Task RunAsync(CommandLineProcessor processor, ICommandLineHost host)
+        public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
         {
             _state.State = UInt16;
         }

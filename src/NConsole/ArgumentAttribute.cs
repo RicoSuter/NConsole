@@ -4,18 +4,33 @@ using System.Reflection;
 
 namespace NConsole
 {
+    /// <summary>Attribute to define a command line argument.</summary>
     public class ArgumentAttribute : ArgumentAttributeBase
     {
+        /// <summary>Gets or sets the argument name.</summary>
         public string Name { get; set; }
 
+        /// <summary>Gets or sets the position of the unnamed argument.</summary>
         public int Position { get; set; }
 
-        public object Default { get; set; }
+        /// <summary>Gets or sets the default value of the argument. 
+        /// Setting a default value makes the argument optional.</summary>
+        public object DefaultValue { get; set; }
 
-        public override object Load(ICommandLineHost commandLineHost, string[] args, PropertyInfo property)
+        /// <summary>Gets the argument value.</summary>
+        /// <param name="consoleHost">The command line host.</param>
+        /// <param name="args">The arguments.</param>
+        /// <param name="property">The property.</param>
+        /// <returns>The value.</returns>
+        /// <exception cref="System.InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
+        /// <exception cref="InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
+        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property)
         {
+            if (!string.IsNullOrEmpty(Name) && Position > 0)
+                throw new InvalidOperationException("Either the argument Name or Position can be set, but not both.");
+
             if (!string.IsNullOrEmpty(Name))
-                return LoadNamedArgument(commandLineHost, args, property);
+                return LoadNamedArgument(consoleHost, args, property);
             else
                 return LoadPositionalArgument(args);
         }
@@ -28,7 +43,7 @@ namespace NConsole
                 if (argument.StartsWith("/") || argument.StartsWith("-") || argument.StartsWith("--"))
                     continue;
 
-                if (index == Position + 1)
+                if (index == Position)
                     return argument;
 
                 index++;
@@ -36,17 +51,17 @@ namespace NConsole
             return null;
         }
 
-        private object LoadNamedArgument(ICommandLineHost commandLineHost, string[] args, PropertyInfo property)
+        private object LoadNamedArgument(IConsoleHost consoleHost, string[] args, PropertyInfo property)
         {
             var value = GetParameterValue(args, Name);
             if (value != null)
                 return ConvertToType(value, property.PropertyType);
             else
             {
-                if (Default != null)
-                    return Default;
+                if (DefaultValue != null)
+                    return DefaultValue;
                 else
-                    return ConvertToType(commandLineHost.ReadValue(Name), property.PropertyType);
+                    return ConvertToType(consoleHost.ReadValue(Name), property.PropertyType);
             }
         }
 

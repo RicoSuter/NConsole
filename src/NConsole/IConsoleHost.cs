@@ -1,7 +1,7 @@
 namespace NConsole
 {
     /// <summary>An abstraction of the command line.</summary>
-    public interface ICommandLineHost
+    public interface IConsoleHost
     {
         /// <summary>Writes a message to the console.</summary>
         /// <param name="message">The message.</param>

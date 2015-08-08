@@ -47,11 +47,11 @@
     <Compile Include="ArgumentAttribute.cs" />
     <Compile Include="ArgumentAttributeBase.cs" />
     <Compile Include="SwitchAttribute.cs" />
-    <Compile Include="CommandLineHost.cs" />
+    <Compile Include="ConsoleHost.cs" />
     <Compile Include="CommandLineProcessor.cs" />
     <Compile Include="HelpCommand.cs" />
-    <Compile Include="ICommandLineCommand.cs" />
-    <Compile Include="ICommandLineHost.cs" />
+    <Compile Include="IConsoleCommand.cs" />
+    <Compile Include="IConsoleHost.cs" />
     <Compile Include="IDependencyResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
