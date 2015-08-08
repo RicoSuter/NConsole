@@ -12,7 +12,7 @@ Features:
 
 ## Usage
 
-The usage is simple: Create an instance of the `CommandLineProcessor` class, register the commands and execute a command by calling the `ProcessAsync()` method with the command line arguments. 
+The usage is simple: Create an instance of the `CommandLineProcessor` class, register the commands and execute a command by calling the `Process()` method with the command line arguments. 
 
     namespace MyApplication
     {
@@ -21,8 +21,8 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
             static void Main(string[] args)
             {
                 var processor = new CommandLineProcessor(new CommandLineHost());
-                processor.AddCommand<SumCommand>("sum");
-                processor.ProcessAsync(args).Wait();
+                processor.RegisterCommand<SumCommand>("sum");
+                processor.Process(args);
             }
         }
 
@@ -30,10 +30,11 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
         public class SumCommand : ICommandLineCommand
         {
             [Description("The first value.")]
+            [Argument(Name = "FirstValue")]
             public int FirstValue { get; set; }
 
             [Description("The second value.")]
-            [DefaultValue(10)]
+            [Argument(Name = "SecondValue", DefaultValue = 10)]
             public int SecondValue { get; set; }
 
             public void Run(CommandLineProcessor processor, ICommandLineHost host)
