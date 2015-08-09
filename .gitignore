@@ -7,3 +7,5 @@
 *.psess
 
 **/AppPackages/**
+/src/NConsole.sln.GhostDoc.xml
+/src/packages/**

@@ -87,7 +87,7 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyParameterCommand>("test");
 
             //// Act
-            await processor.ProcessAsync(new string[] { "test" });
+            await processor.ProcessAsync(new string[] { "test" }); // exception
 
             //// Assert
         }
