@@ -56,6 +56,6 @@ The `SecondValue` has a default value and is therefore optional. This parameter 
     MyApplication.exe sum /firstvalue:5
     Output: 15
 
-To show a list of all available commands with their parameters execute: 
+Execute the following command to show a list of all available commands: 
 
     MyApplication.exe help
