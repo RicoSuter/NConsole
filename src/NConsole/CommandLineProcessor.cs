@@ -50,9 +50,10 @@ namespace NConsole
 
         /// <summary>Processes the command in the given command line arguments.</summary>
         /// <param name="args">The arguments.</param>
-        /// <returns>The task.</returns>
+        /// <returns>The executed command.</returns>
+        /// <exception cref="InvalidOperationException">The command could not be found.</exception>
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
-        public async Task ProcessAsync(string[] args)
+        public async Task<IConsoleCommand> ProcessAsync(string[] args)
         {
             var commandName = GetCommandName(args);
             if (_commands.ContainsKey(commandName))
@@ -71,17 +72,20 @@ namespace NConsole
                 }
 
                 await command.RunAsync(this, _consoleHost);
+                return command;
             }
             else
-                _consoleHost.WriteMessage("Command '" + commandName + "' could not be found.\n");
+                throw new InvalidOperationException("The command '" + commandName + "' could not be found.");
         }
 
         /// <summary>Processes the command in the given command line arguments.</summary>
         /// <param name="args">The arguments.</param>
+        /// <returns>The exeucuted command.</returns>
+        /// <exception cref="InvalidOperationException">The command could not be found.</exception>
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
-        public void Process(string[] args)
+        public IConsoleCommand Process(string[] args)
         {
-            ProcessAsync(args).Wait();
+            return ProcessAsync(args).Result;
         }
 
         /// <summary>Gets the name of the command to execute.</summary>

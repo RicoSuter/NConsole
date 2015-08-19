@@ -15,10 +15,10 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyEnumCommand>("test");
 
             //// Act
-            await processor.ProcessAsync(new string[] { "test", "/myenum:def" }); 
+            var command = (MyEnumCommand)await processor.ProcessAsync(new string[] { "test", "/myenum:def" }); 
 
             //// Assert
-            // No exception thrown
+            Assert.AreEqual(MyEnum.Def, command.MyEnum);
         }
     }
 
@@ -33,12 +33,8 @@ namespace NConsole.Tests
         [Argument(Name = "MyEnum")]
         public MyEnum MyEnum { get; set; }
 
-        public bool IsCorrect { get; private set; }
-
         public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
         {
-            if (MyEnum != MyEnum.Def)
-                throw new Exception("Wrong enum loaded.");
         }
     }
 }

@@ -49,7 +49,7 @@ namespace NConsole.Tests
         }
 
         [TestMethod]
-        public async Task When_first_argument_is_existing_command_name_then_command_is_executed()
+        public void When_first_argument_is_existing_command_name_then_command_is_executed()
         {
             //// Arrange
             var resolver = new MyDependencyResolver(); 
@@ -57,10 +57,10 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyCommand>("test");
 
             //// Act
-            await processor.ProcessAsync(new string[] { "test" });
+            var command = (MyCommand)processor.Process(new string[] { "test" });
 
             //// Assert
-            Assert.AreEqual(true, resolver.MyState.State);
+            Assert.IsNotNull(command);
         }
         
         [TestMethod]
@@ -94,7 +94,6 @@ namespace NConsole.Tests
 
         public class MyState
         {
-            public object State { get; set; }
         }
 
         public class MyCommand : IConsoleCommand
@@ -108,7 +107,6 @@ namespace NConsole.Tests
 
             public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
-                _state.State = true;
             }
         }
     }

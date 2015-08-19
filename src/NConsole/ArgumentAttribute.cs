@@ -59,7 +59,7 @@ namespace NConsole
             else
             {
                 if (DefaultValue != null)
-                    return DefaultValue;
+                    return ConvertToType(DefaultValue.ToString(), property.PropertyType);
                 else
                     return ConvertToType(consoleHost.ReadValue(Name), property.PropertyType);
             }
