@@ -1,6 +1,11 @@
-NConsole is a .NET library to parse command line arguments and execute commands. If the command name or some non-optional parameters are missing, the library automatically switches to an interactive mode where the user is prompted to enter the missing parameters. Using descriptive attributes on the command class and its parameters, a nicely formatted help page can be generated.  
+# NConsole for .NET
 
-To use the library, install the [NuGet package 'NConsole'](https://www.nuget.org/packages/NConsole/). 
+[![Build status](https://ci.appveyor.com/api/projects/status/llcch712f3q1wswe?svg=true)](https://ci.appveyor.com/project/rsuter/nconsole)
+[![NuGet Version](http://img.shields.io/nuget/v/NConsole.svg?style=flat)](https://www.nuget.org/packages/NConsole/)
+
+NConsole is a .NET library to parse command line arguments and execute commands. If the command name or some non-optional parameters are missing, the library automatically switches to an interactive mode where the user is prompted to enter the missing parameters. Using descriptive attributes on the command class and its parameters, a nicely formatted help page can be generated. 
+
+To use the library in your application, install [the NuGet package NConsole](https://www.nuget.org/packages/NConsole/). 
 
 Features: 
 
@@ -12,7 +17,7 @@ Features:
 
 ## Usage
 
-The usage is simple: Create an instance of the `CommandLineProcessor` class, register the commands and execute a command by calling the `ProcessAsync()` method with the command line arguments. 
+The usage is simple: Create an instance of the `CommandLineProcessor` class, register the commands and execute a command by calling the `Process()` method with the command line arguments. 
 
     namespace MyApplication
     {
@@ -21,8 +26,8 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
             static void Main(string[] args)
             {
                 var processor = new CommandLineProcessor(new CommandLineHost());
-                processor.AddCommand<SumCommand>("sum");
-                processor.ProcessAsync(args).Wait();
+                processor.RegisterCommand<SumCommand>("sum");
+                processor.Process(args);
             }
         }
 
@@ -30,10 +35,11 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
         public class SumCommand : ICommandLineCommand
         {
             [Description("The first value.")]
+            [Argument(Name = "FirstValue")]
             public int FirstValue { get; set; }
 
             [Description("The second value.")]
-            [DefaultValue(10)]
+            [Argument(Name = "SecondValue", DefaultValue = 10)]
             public int SecondValue { get; set; }
 
             public void Run(CommandLineProcessor processor, ICommandLineHost host)
@@ -53,6 +59,6 @@ The `SecondValue` has a default value and is therefore optional. This parameter 
     MyApplication.exe sum /firstvalue:5
     Output: 15
 
-To show a list of all available commands with their parameters execute: 
+Execute the following command to show a list of all available commands: 
 
     MyApplication.exe help
