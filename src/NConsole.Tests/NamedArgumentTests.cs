@@ -149,6 +149,20 @@ namespace NConsole.Tests
             Assert.AreEqual("abc", command.String);
         }
 
+        [TestMethod]
+        public async Task When_running_command_with_quoted_string_parameter_then_they_are_correctly_set()
+        {
+            //// Arrange
+            var processor = new CommandLineProcessor(new ConsoleHost());
+            processor.RegisterCommand<MyArgumentCommand>("test");
+
+            //// Act
+            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/string:abc def" });
+
+            //// Assert
+            Assert.AreEqual("abc def", command.String);
+        }
+
         public class MyArgumentCommand : IConsoleCommand
         {
             [Argument(Name = "UInt16", DefaultValue = 0)]

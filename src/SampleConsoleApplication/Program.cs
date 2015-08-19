@@ -10,7 +10,7 @@ namespace SampleConsoleApplication
         {
             var processor = new CommandLineProcessor(new ConsoleHost());
             processor.RegisterCommand<CloneCommand>("clone");
-            processor.Process(new string[] { "clone", "--quiet", "http://example.com/app.git" });
+            processor.Process(args);
             Console.ReadKey();
         }
 
@@ -21,6 +21,9 @@ namespace SampleConsoleApplication
 
             [Switch(ShortName = "q", LongName = "quiet")]
             public bool Quiet { get; set; }
+
+            [Argument(Name = "Test")]
+            public string Test { get; set; }
 
             public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
