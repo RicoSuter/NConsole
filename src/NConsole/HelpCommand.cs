@@ -23,11 +23,13 @@ namespace NConsole
             {
                 foreach (var pair in processor.Commands)
                 {
-                    PrintCommand(host, pair);
+                    if (pair.Key != "help")
+                       PrintCommand(host, pair);
+
                     host.WriteMessage("\n");
                 }
             }
-            else if(processor.Commands.ContainsKey(Command))
+            else if (processor.Commands.ContainsKey(Command))
                 PrintCommand(host, processor.Commands.Single(c => c.Key == Command));
 
             return Task.FromResult(true);
@@ -36,21 +38,30 @@ namespace NConsole
         private void PrintCommand(IConsoleHost host, KeyValuePair<string, Type> pair)
         {
             var commandType = pair.Value;
+
+            host.WriteMessage("---------------------\n");
+            host.WriteMessage("Command: ");
             host.WriteMessage(pair.Key + "\n");
 
             var descriptionAttribute = commandType.GetCustomAttribute<DescriptionAttribute>();
             if (descriptionAttribute != null)
-                host.WriteMessage(descriptionAttribute.Description + "\n");
+                host.WriteMessage("  " + descriptionAttribute.Description + "\n");
 
+            host.WriteMessage("\nArguments: \n");
             foreach (var property in commandType.GetRuntimeProperties())
             {
-                var parameter = property.Name.ToLowerInvariant();
+                var argumentAttribute = property.GetCustomAttribute<ArgumentAttribute>();
+                if (argumentAttribute != null)
+                {
+                    if (argumentAttribute.Position > 0)
+                        host.WriteMessage("  Argument Position " + argumentAttribute.Position + "\n");
+                    else
+                        host.WriteMessage("  " + argumentAttribute.Name.ToLowerInvariant() + "\n");
 
-                host.WriteMessage("  " + parameter + " (" + property.PropertyType.Name + ")" + "\n");
-
-                var parameterDescriptionAttribute = property.GetCustomAttribute<DescriptionAttribute>();
-                if (parameterDescriptionAttribute != null)
-                    host.WriteMessage("    " + parameterDescriptionAttribute.Description + "\n");
+                    var parameterDescriptionAttribute = property.GetCustomAttribute<DescriptionAttribute>();
+                    if (parameterDescriptionAttribute != null)
+                        host.WriteMessage("    " + parameterDescriptionAttribute.Description + "\n");
+                }
             }
         }
     }
