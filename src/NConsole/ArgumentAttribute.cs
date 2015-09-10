@@ -36,7 +36,7 @@ namespace NConsole
                 value = GetNamedArgumentValue(args, Name);
 
             if (value != null)
-                return value; 
+                return ConvertToType(value.ToString(), property.PropertyType);
 
             if (DefaultValue != null)
                 return ConvertToType(DefaultValue.ToString(), property.PropertyType);
