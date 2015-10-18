@@ -60,6 +60,7 @@ namespace NConsole
                     index++;
                 }
             }
+
             return null; 
         }
 
