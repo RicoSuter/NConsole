@@ -94,7 +94,7 @@ namespace NConsole
         protected string GetCommandName(string[] args)
         {
             if (args.Length == 0)
-                return _consoleHost.ReadValue("Command").ToLowerInvariant();
+                return _consoleHost.ReadValue("Command: ").ToLowerInvariant();
 
             return args[0].ToLowerInvariant();
         }

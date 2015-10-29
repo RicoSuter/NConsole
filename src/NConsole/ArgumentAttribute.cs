@@ -25,6 +25,7 @@ namespace NConsole
         /// <returns>The value.</returns>
         /// <exception cref="System.InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
         /// <exception cref="InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
+        /// <exception cref="InvalidOperationException">The parameter has no default value.</exception>
         public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property)
         {
             if (!string.IsNullOrEmpty(Name) && Position > 0)
@@ -38,10 +39,24 @@ namespace NConsole
             if (value != null)
                 return ConvertToType(value.ToString(), property.PropertyType);
 
-            if (DefaultValue != null)
+            if (!IsInteractiveMode(args) && DefaultValue != null)
                 return ConvertToType(DefaultValue.ToString(), property.PropertyType);
+            
+            var stringVal = consoleHost.ReadValue(GetFullParameterDescription(property));
+            if (stringVal == "[default]")
+            {
+                if (DefaultValue != null)
+                    return ConvertToType(DefaultValue.ToString(), property.PropertyType);
 
-            return ConvertToType(consoleHost.ReadValue(GetFullParameterName(property)), property.PropertyType);
+                throw new InvalidOperationException("The parameter has no default value.");
+            }
+
+            return ConvertToType(stringVal, property.PropertyType);
+        }
+
+        private bool IsInteractiveMode(string[] args)
+        {
+            return args.Length == 0;
         }
 
         private object GetPositionalArgumentValue(string[] args)
@@ -72,13 +87,18 @@ namespace NConsole
             return null;
         }
 
-        private string GetFullParameterName(PropertyInfo property)
+        private string GetFullParameterDescription(PropertyInfo property)
         {
             var name = Name ?? property.Name;
+
+            if (DefaultValue != null)
+                name = "Type [default] to use default value: \"" + DefaultValue + "\"\n" + name; 
+
             var descriptionAttribute = property.GetCustomAttribute<DescriptionAttribute>();
             if (descriptionAttribute != null)
-                return descriptionAttribute.Description + "\n" + name;
-            return name;
+                name = descriptionAttribute.Description + "\n" + name;
+
+            return name + ": ";
         }
     }
 }

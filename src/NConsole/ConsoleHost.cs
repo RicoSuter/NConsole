@@ -17,7 +17,7 @@ namespace NConsole
         /// <returns>The value.</returns>
         public string ReadValue(string message)
         {
-            Console.Write("\n" + message + ": ");
+            Console.Write("\n" + message);
             return Console.ReadLine();
         }
     }

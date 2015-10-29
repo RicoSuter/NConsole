@@ -10,27 +10,19 @@ namespace NConsole
     /// <summary>The help command to show the availble list of commands.</summary>
     public class HelpCommand : IConsoleCommand
     {
-        /// <summary>Gets or sets the command to show the help for.</summary>
-        [Argument(Position = 1, DefaultValue = "")]
-        public string Command { get; set; }
-
         /// <summary>Runs the command.</summary>
         /// <param name="processor">The processor.</param>
         /// <param name="host">The host.</param>
         public Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
         {
-            if (string.IsNullOrEmpty(Command))
+            foreach (var pair in processor.Commands)
             {
-                foreach (var pair in processor.Commands)
+                if (pair.Key != "help")
                 {
-                    if (pair.Key != "help")
-                       PrintCommand(host, pair);
-
-                    host.WriteMessage("\n");
+                    PrintCommand(host, pair);
+                    host.ReadValue("Press <enter> key for next command...");
                 }
             }
-            else if (processor.Commands.ContainsKey(Command))
-                PrintCommand(host, processor.Commands.Single(c => c.Key == Command));
 
             return Task.FromResult(true);
         }
