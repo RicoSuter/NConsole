@@ -25,7 +25,7 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
         {
             static void Main(string[] args)
             {
-                var processor = new CommandLineProcessor(new CommandLineHost());
+                var processor = new CommandLineProcessor(new ConsoleHost());
                 processor.RegisterCommand<SumCommand>("sum");
                 processor.Process(args);
             }
