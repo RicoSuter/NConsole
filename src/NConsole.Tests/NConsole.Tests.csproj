@@ -54,6 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ArrayArgumentTests.cs" />
     <Compile Include="NamedArgumentTests.cs" />
     <Compile Include="CommandLineProcessorTests.cs" />
     <Compile Include="EnumArgumentTests.cs" />

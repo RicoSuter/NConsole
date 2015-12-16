@@ -6,6 +6,6 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCompany("Rico Suter")]
 [assembly: AssemblyProduct("NConsole")]
 [assembly: AssemblyCopyright("Copyright © Rico Suter, 2015")]
-[assembly: AssemblyVersion("0.6.*")]
+[assembly: AssemblyVersion("1.0.*")]
 
 [assembly: InternalsVisibleTo("NConsole.Tests")]
