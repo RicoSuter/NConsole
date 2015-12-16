@@ -8,7 +8,7 @@ namespace NConsole.Tests
     public class ArrayArgumentTests
     {
         [TestMethod]
-        public async Task WhenArgumentIsEnumThenItShouldBeLoadedCorrectly()
+        public async Task When_argument_is_string_array_then_it_can_be_defined_as_comma_separated_string()
         {
             //// Arrange
             var processor = new CommandLineProcessor(new ConsoleHost());
