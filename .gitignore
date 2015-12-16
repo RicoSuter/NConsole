@@ -9,3 +9,9 @@
 **/AppPackages/**
 /src/NConsole.sln.GhostDoc.xml
 /src/packages/**
+
+[Bb]in/
+[Oo]bj/
+packages/
+*.ncrunch*
+/src/_NCrunch_NConsole/*.cache
