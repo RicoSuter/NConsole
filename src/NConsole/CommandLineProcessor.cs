@@ -102,16 +102,33 @@ namespace NConsole
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
         private IConsoleCommand CreateCommand(Type commandType)
         {
-            var constructor = commandType.GetConstructors().First();
+	        var constructors = commandType.GetConstructors();
+	        IConsoleCommand command;
 
-            if (constructor.GetParameters().Length > 0 && _dependencyResolver == null)
-                throw new InvalidOperationException("No dependency resolver available to create a command without default constructor.");
+	        if (constructors.Any())
+	        {
+				var constructor = constructors.First();
 
-            var parameters = constructor.GetParameters()
-                .Select(param => _dependencyResolver.GetService(param.ParameterType))
-                .ToArray();
+				if (constructor.GetParameters().Length > 0 && _dependencyResolver == null)
+					throw new InvalidOperationException("No dependency resolver available to create a command without default constructor.");
 
-            return (IConsoleCommand) constructor.Invoke(parameters);
+				var parameters = constructor.GetParameters()
+					.Select(param => _dependencyResolver.GetService(param.ParameterType))
+					.ToArray();
+
+				command = (IConsoleCommand)constructor.Invoke(parameters);
+	        }
+	        else
+	        {
+		        if (_dependencyResolver == null)
+		        {
+			        throw new InvalidOperationException($"Cannot create an instance of {commandType} because it does not have any accessible constructors and no dependency resolver is available.");
+		        }
+
+		        command = (IConsoleCommand)_dependencyResolver.GetService(commandType);
+	        }
+
+	        return command;
         }
     }
 }
