@@ -1,7 +1,7 @@
 # NConsole for .NET
 
 [![Build status](https://ci.appveyor.com/api/projects/status/llcch712f3q1wswe?svg=true)](https://ci.appveyor.com/project/rsuter/nconsole)
-[![NuGet Version](http://img.shields.io/nuget/v/NConsole.svg?style=flat)](https://www.nuget.org/packages/NConsole/)
+[![NuGet Version](https://badge.fury.io/nu/nconsole.svg)](https://www.nuget.org/packages/NConsole/)
 
 NConsole is a .NET library to parse command line arguments and execute commands. If the command name or some non-optional parameters are missing, the library automatically switches to an interactive mode where the user is prompted to enter the missing parameters. Using descriptive attributes on the command class and its parameters, a nicely formatted help page can be generated. 
 
