@@ -42,8 +42,8 @@ namespace NConsole
 
             if (!IsInteractiveMode(args) && DefaultValue != null)
             {
-                var defaultValueAsString = DefaultValue is IEnumerable
-                    ? string.Join(",", ((IEnumerable) DefaultValue).OfType<object>().Select(o => o.ToString()))
+                var defaultValueAsString = DefaultValue is IList
+                    ? string.Join(",", ((IList)DefaultValue).OfType<object>().Select(o => o.ToString()))
                     : DefaultValue.ToString();
 
                 return ConvertToType(defaultValueAsString, property.PropertyType);
@@ -83,7 +83,7 @@ namespace NConsole
                 }
             }
 
-            return null; 
+            return null;
         }
 
         private string GetNamedArgumentValue(string[] args, string name)
@@ -99,7 +99,7 @@ namespace NConsole
             var name = Name ?? property.Name;
 
             if (DefaultValue != null)
-                name = "Type [default] to use default value: \"" + DefaultValue + "\"\n" + name; 
+                name = "Type [default] to use default value: \"" + DefaultValue + "\"\n" + name;
 
             var descriptionAttribute = property.GetCustomAttribute<DescriptionAttribute>();
             if (descriptionAttribute != null)
