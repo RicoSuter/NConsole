@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -40,8 +41,14 @@ namespace NConsole
                 return ConvertToType(value.ToString(), property.PropertyType);
 
             if (!IsInteractiveMode(args) && DefaultValue != null)
-                return ConvertToType(DefaultValue.ToString(), property.PropertyType);
-            
+            {
+                var defaultValueAsString = DefaultValue is IEnumerable
+                    ? string.Join(",", ((IEnumerable) DefaultValue).OfType<object>().Select(o => o.ToString()))
+                    : DefaultValue.ToString();
+
+                return ConvertToType(defaultValueAsString, property.PropertyType);
+            }
+
             var stringVal = consoleHost.ReadValue(GetFullParameterDescription(property));
             if (stringVal == "[default]")
             {

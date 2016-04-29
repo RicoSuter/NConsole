@@ -47,7 +47,7 @@ namespace NConsole
                 return Enum.Parse(type, value, true);
 
             if (type == typeof(string[]))
-                return value.Split(',');
+                return !string.IsNullOrEmpty(value) ? value.Split(',') : new string[] { };
 
             return value;
         }
