@@ -39,12 +39,13 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
             public int FirstValue { get; set; }
 
             [Description("The second value.")]
-            [Argument(Name = "SecondValue", DefaultValue = 10)]
-            public int SecondValue { get; set; }
+            [Argument(Name = "SecondValue", IsRequired = false)]
+            public int SecondValue { get; set; } = 10
 
-            public async Task RunAsync Run(CommandLineProcessor processor, IConsoleHost host)
+            public async Task<object> RunAsync Run(CommandLineProcessor processor, IConsoleHost host)
             {
                 host.WriteMessage((FirstValue + SecondValue).ToString());
+                return null;
             }
         }
     }
@@ -54,7 +55,7 @@ The command `sum` can now be executed using the following command line call:
     MyApplication.exe sum /firstvalue:5 /secondvalue:6
     Output: 11
 
-The `SecondValue` has a default value and is therefore optional. This parameter is not required:
+The `SecondValue` has is not required (`IsRequired` set to ``false`). The default value is set via a C# property initializer. This parameter is not required:
 
     MyApplication.exe sum /firstvalue:5
     Output: 15
