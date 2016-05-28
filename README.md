@@ -40,7 +40,7 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
 
             [Description("The second value.")]
             [Argument(Name = "SecondValue", IsRequired = false)]
-            public int SecondValue { get; set; } = 10
+            public int SecondValue { get; set; } = 10;
 
             public async Task<object> RunAsync Run(CommandLineProcessor processor, IConsoleHost host)
             {
