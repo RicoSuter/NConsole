@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace NConsole
@@ -11,8 +10,10 @@ namespace NConsole
         /// <param name="consoleHost">The command line host.</param>
         /// <param name="args">The arguments.</param>
         /// <param name="property">The property.</param>
+        /// <param name="command"></param>
+        /// <param name="input">The output from the previous command in the chain.</param>
         /// <returns>The value.</returns>
-        public abstract object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property);
+        public abstract object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input);
 
         /// <summary>Converts a string value to a specific type.</summary>
         /// <param name="value">The value.</param>

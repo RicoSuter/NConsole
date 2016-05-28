@@ -15,50 +15,51 @@ namespace NConsole
         /// <summary>Gets or sets the position of the unnamed argument.</summary>
         public int Position { get; set; }
 
-        /// <summary>Gets or sets the default value of the argument. 
-        /// Setting a default value makes the argument optional.</summary>
-        public object DefaultValue { get; set; }
+        /// <summary>Gets or sets a value indicating whether the argument is required (default: true).</summary>
+        public bool IsRequired { get; set; } = true;
+
+        /// <summary>Gets or sets a value indicating whether the argument accepts an input from a previous command (default: false).</summary>
+        public bool AcceptsCommandInput { get; set; } = false;
 
         /// <summary>Gets the argument value.</summary>
         /// <param name="consoleHost">The command line host.</param>
         /// <param name="args">The arguments.</param>
         /// <param name="property">The property.</param>
+        /// <param name="command">The command.</param>
+        /// <param name="input">The output from the previous command in the chain.</param>
         /// <returns>The value.</returns>
         /// <exception cref="System.InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
         /// <exception cref="InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
         /// <exception cref="InvalidOperationException">The parameter has no default value.</exception>
-        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property)
+        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input)
         {
             if (!string.IsNullOrEmpty(Name) && Position > 0)
                 throw new InvalidOperationException("Either the argument Name or Position can be set, but not both.");
 
-            var value = GetPositionalArgumentValue(args);
+            string value = null;
 
-            if (value == null)
-                value = GetNamedArgumentValue(args, Name);
+            if (TryGetPositionalArgumentValue(args, out value))
+                return ConvertToType(value, property.PropertyType);
 
-            if (value != null)
-                return ConvertToType(value.ToString(), property.PropertyType);
+            if (TryGetNamedArgumentValue(args, out value))
+                return ConvertToType(value, property.PropertyType);
 
-            if (!IsInteractiveMode(args) && DefaultValue != null)
+            if (AcceptsCommandInput && input != null)
+                return input;
+
+            if (!IsInteractiveMode(args) && !IsRequired)
+                return property.GetValue(command);
+
+            value = consoleHost.ReadValue(GetFullParameterDescription(property, command));
+            if (value == "[default]")
             {
-                var defaultValueAsString = DefaultValue is IList
-                    ? string.Join(",", ((IList)DefaultValue).OfType<object>().Select(o => o.ToString()))
-                    : DefaultValue.ToString();
+                if (!IsRequired)
+                    return property.GetValue(command);
 
-                return ConvertToType(defaultValueAsString, property.PropertyType);
+                throw new InvalidOperationException("The parameter '" + Name + "' is required.");
             }
 
-            var stringVal = consoleHost.ReadValue(GetFullParameterDescription(property));
-            if (stringVal == "[default]")
-            {
-                if (DefaultValue != null)
-                    return ConvertToType(DefaultValue.ToString(), property.PropertyType);
-
-                throw new InvalidOperationException("The parameter has no default value.");
-            }
-
-            return ConvertToType(stringVal, property.PropertyType);
+            return ConvertToType(value, property.PropertyType);
         }
 
         private bool IsInteractiveMode(string[] args)
@@ -66,7 +67,7 @@ namespace NConsole
             return args.Length == 0;
         }
 
-        private object GetPositionalArgumentValue(string[] args)
+        private bool TryGetPositionalArgumentValue(string[] args, out string value)
         {
             if (Position > 0)
             {
@@ -77,29 +78,42 @@ namespace NConsole
                         continue;
 
                     if (index == Position)
-                        return argument;
+                    {
+                        value = argument;
+                        return true;
+                    }
 
                     index++;
                 }
             }
 
-            return null;
+            value = null;
+            return false;
         }
 
-        private string GetNamedArgumentValue(string[] args, string name)
+        private bool TryGetNamedArgumentValue(string[] args, out string value)
         {
-            var arg = args.FirstOrDefault(a => a.ToLowerInvariant().StartsWith("/" + name.ToLowerInvariant() + ":"));
+            value = null;
+
+            if (string.IsNullOrEmpty(Name))
+                return false; 
+
+            var arg = args.FirstOrDefault(a => a.ToLowerInvariant().StartsWith("/" + Name.ToLowerInvariant() + ":"));
             if (arg != null)
-                return arg.Substring(arg.IndexOf(":", StringComparison.InvariantCulture) + 1);
-            return null;
+            {
+                value = arg.Substring(arg.IndexOf(":", StringComparison.InvariantCulture) + 1);
+                return true;
+            }
+
+            return false;
         }
 
-        private string GetFullParameterDescription(PropertyInfo property)
+        private string GetFullParameterDescription(PropertyInfo property, IConsoleCommand command)
         {
             var name = Name ?? property.Name;
 
-            if (DefaultValue != null)
-                name = "Type [default] to use default value: \"" + DefaultValue + "\"\n" + name;
+            if (IsRequired == false)
+                name = "Type [default] to use default value: \"" + property.GetValue(command) + "\"\n" + name;
 
             var descriptionAttribute = property.GetCustomAttribute<DescriptionAttribute>();
             if (descriptionAttribute != null)

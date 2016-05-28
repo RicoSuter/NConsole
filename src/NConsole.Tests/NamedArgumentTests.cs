@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,7 +16,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand) await processor.ProcessAsync(new string[] { "test", "/uint16:123" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/uint16:123" });
+            var command = (MyArgumentCommand)result.Last().Command; 
 
             //// Assert
             Assert.IsTrue(123 == command.UInt16);
@@ -29,7 +31,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/uint32:123" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/uint32:123" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.IsTrue(123 == command.UInt32);
@@ -43,7 +46,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/uint64:123" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/uint64:123" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.IsTrue(123 == command.UInt64);
@@ -57,7 +61,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/int16:123" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/int16:123" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.IsTrue(123 == command.Int16);
@@ -71,7 +76,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/int32:123" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/int32:123" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.IsTrue(123 == command.Int32);
@@ -85,7 +91,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/int64:123" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/int64:123" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.IsTrue(123 == command.Int64);
@@ -99,7 +106,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/decimal:123" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/decimal:123" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.IsTrue(123 == command.Decimal);
@@ -113,7 +121,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/boolean:true" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/boolean:true" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.IsTrue(command.Boolean);
@@ -127,7 +136,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/datetime:2014-5-3" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/datetime:2014-5-3" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.AreEqual(3, command.DateTime.Day);
@@ -143,7 +153,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/string:abc" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/string:abc" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.AreEqual("abc", command.String);
@@ -157,7 +168,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var command = (MyArgumentCommand)await processor.ProcessAsync(new string[] { "test", "/string:abc def" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/string:abc def" });
+            var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
             Assert.AreEqual("abc def", command.String);
@@ -165,41 +177,42 @@ namespace NConsole.Tests
 
         public class MyArgumentCommand : IConsoleCommand
         {
-            [Argument(Name = "UInt16", DefaultValue = 0)]
-            public UInt16 UInt16 { get; set; }
+            [Argument(Name = "UInt16", IsRequired = false)]
+            public UInt16 UInt16 { get; set; } = 0;
 
-            [Argument(Name = "UInt32", DefaultValue = 0)]
-            public UInt32 UInt32 { get; set; }
+            [Argument(Name = "UInt32", IsRequired = false)]
+            public UInt32 UInt32 { get; set; } = 0;
 
-            [Argument(Name = "UInt64", DefaultValue = 0)]
-            public UInt64 UInt64 { get; set; }
-
-
-            [Argument(Name = "Int16", DefaultValue = 0)]
-            public Int16 Int16 { get; set; }
-
-            [Argument(Name = "Int32", DefaultValue = 0)]
-            public Int32 Int32 { get; set; }
-
-            [Argument(Name = "Int64", DefaultValue = 0)]
-            public Int64 Int64 { get; set; }
-
-            
-            [Argument(Name = "Decimal", DefaultValue = 0)]
-            public Decimal Decimal { get; set; }
-
-            [Argument(Name = "Boolean", DefaultValue = false)]
-            public Boolean Boolean { get; set; }
-
-            [Argument(Name = "DateTime", DefaultValue = "2015-1-1")]
-            public DateTime DateTime { get; set; }
+            [Argument(Name = "UInt64", IsRequired = false)]
+            public UInt64 UInt64 { get; set; } = 0;
 
 
-            [Argument(Name = "String", DefaultValue = "")]
-            public string String { get; set; }
+            [Argument(Name = "Int16", IsRequired = false)]
+            public Int16 Int16 { get; set; } = 0;
 
-            public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
+            [Argument(Name = "Int32", IsRequired = false)]
+            public Int32 Int32 { get; set; } = 0;
+
+            [Argument(Name = "Int64", IsRequired = false)]
+            public Int64 Int64 { get; set; } = 0;
+
+
+            [Argument(Name = "Decimal", IsRequired = false)]
+            public Decimal Decimal { get; set; } = 0;
+
+            [Argument(Name = "Boolean", IsRequired = false)]
+            public Boolean Boolean { get; set; } = false;
+
+            [Argument(Name = "DateTime", IsRequired = false)]
+            public DateTime DateTime { get; set; } = DateTime.Parse("2015-1-1");
+
+
+            [Argument(Name = "String", IsRequired = false)]
+            public string String { get; set; } = "";
+
+            public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
+                return null; 
             }
         }
     }

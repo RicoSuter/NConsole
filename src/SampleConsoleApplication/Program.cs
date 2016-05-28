@@ -25,9 +25,10 @@ namespace SampleConsoleApplication
             [Argument(Name = "Test")]
             public string Test { get; set; }
 
-            public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
+            public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
                 host.WriteMessage(string.Format("Clone {{ Repository={0}, Quiet={1} }}", Repository, Quiet));
+                return null; 
             }
         }
     }

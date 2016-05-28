@@ -19,13 +19,13 @@ namespace NConsole
         public CommandLineProcessor(IConsoleHost consoleHost, IDependencyResolver dependencyResolver = null)
         {
             _consoleHost = consoleHost;
-            _dependencyResolver = dependencyResolver; 
+            _dependencyResolver = dependencyResolver;
 
             RegisterCommand<HelpCommand>("help");
         }
 
         /// <summary>Gets the list of registered commands.</summary>
-        public IReadOnlyDictionary<string, Type> Commands { get { return _commands; } }
+        public IReadOnlyDictionary<string, Type> Commands => _commands;
 
         /// <summary>Adds a command.</summary>
         /// <typeparam name="TCommandLineCommand">The type of the command.</typeparam>
@@ -50,10 +50,44 @@ namespace NConsole
 
         /// <summary>Processes the command in the given command line arguments.</summary>
         /// <param name="args">The arguments.</param>
+        /// <param name="input">The input for the first command.</param>
         /// <returns>The executed command.</returns>
         /// <exception cref="InvalidOperationException">The command could not be found.</exception>
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
-        public async Task<IConsoleCommand> ProcessAsync(string[] args)
+        public async Task<IList<CommandResult>> ProcessAsync(string[] args, object input = null)
+        {
+            var results = new List<CommandResult>();
+
+            var commands = new List<string[]>();
+            var commandArgs = new List<string>();
+            foreach (var arg in args)
+            {
+                if (arg == "=")
+                {
+                    commands.Add(commandArgs.ToArray());
+                    commandArgs = new List<string>();
+                }
+                else
+                    commandArgs.Add(arg);
+            }
+            commands.Add(commandArgs.ToArray());
+
+            foreach (var command in commands)
+            {
+                var result = await ProcessSingleAsync(command, results.LastOrDefault()?.Output);
+                results.Add(result);
+            }
+
+            return results;
+        }
+
+        /// <summary>Processes the command in the given command line arguments.</summary>
+        /// <param name="args">The arguments.</param>
+        /// <param name="input">The input for the command.</param>
+        /// <returns>The executed command.</returns>
+        /// <exception cref="InvalidOperationException">The command could not be found.</exception>
+        /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
+        public async Task<CommandResult> ProcessSingleAsync(string[] args, object input = null)
         {
             var commandName = GetCommandName(args);
             if (_commands.ContainsKey(commandName))
@@ -66,13 +100,17 @@ namespace NConsole
                     var argumentAttribute = property.GetCustomAttribute<ArgumentAttributeBase>();
                     if (argumentAttribute != null)
                     {
-                        var value = argumentAttribute.GetValue(_consoleHost, args, property);
+                        var value = argumentAttribute.GetValue(_consoleHost, args, property, command, input);
                         property.SetValue(command, value);
                     }
                 }
 
-                await command.RunAsync(this, _consoleHost);
-                return command;
+                var output = await command.RunAsync(this, _consoleHost);
+                return new CommandResult
+                {
+                    Command = command,
+                    Output = output
+                };
             }
             else
                 throw new InvalidOperationException("The command '" + commandName + "' could not be found.");
@@ -80,12 +118,13 @@ namespace NConsole
 
         /// <summary>Processes the command in the given command line arguments.</summary>
         /// <param name="args">The arguments.</param>
+        /// <param name="input">The output from the previous command.</param>
         /// <returns>The exeucuted command.</returns>
         /// <exception cref="InvalidOperationException">The command could not be found.</exception>
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
-        public IConsoleCommand Process(string[] args)
+        public IList<CommandResult> Process(string[] args, object input = null)
         {
-            return ProcessAsync(args).Result;
+            return ProcessAsync(args, input).Result;
         }
 
         /// <summary>Gets the name of the command to execute.</summary>
@@ -102,33 +141,34 @@ namespace NConsole
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
         private IConsoleCommand CreateCommand(Type commandType)
         {
-	        var constructors = commandType.GetConstructors();
-	        IConsoleCommand command;
+            var constructors = commandType.GetConstructors();
+            IConsoleCommand command;
 
-	        if (constructors.Any())
-	        {
-				var constructor = constructors.First();
+            if (constructors.Any())
+            {
+                var constructor = constructors.First();
 
-				if (constructor.GetParameters().Length > 0 && _dependencyResolver == null)
-					throw new InvalidOperationException("No dependency resolver available to create a command without default constructor.");
+                if (constructor.GetParameters().Length > 0 && _dependencyResolver == null)
+                    throw new InvalidOperationException("No dependency resolver available to create a command without default constructor.");
 
-				var parameters = constructor.GetParameters()
-					.Select(param => _dependencyResolver.GetService(param.ParameterType))
-					.ToArray();
+                var parameters = constructor.GetParameters()
+                    .Select(param => _dependencyResolver.GetService(param.ParameterType))
+                    .ToArray();
 
-				command = (IConsoleCommand)constructor.Invoke(parameters);
-	        }
-	        else
-	        {
-		        if (_dependencyResolver == null)
-		        {
-			        throw new InvalidOperationException($"Cannot create an instance of {commandType} because it does not have any accessible constructors and no dependency resolver is available.");
-		        }
+                command = (IConsoleCommand)constructor.Invoke(parameters);
+            }
+            else
+            {
+                if (_dependencyResolver == null)
+                {
+                    throw new InvalidOperationException($"Cannot create an instance of {commandType} because it does not " +
+                                                        $"have any accessible constructors and no dependency resolver is available.");
+                }
 
-		        command = (IConsoleCommand)_dependencyResolver.GetService(commandType);
-	        }
+                command = (IConsoleCommand)_dependencyResolver.GetService(commandType);
+            }
 
-	        return command;
+            return command;
         }
     }
 }

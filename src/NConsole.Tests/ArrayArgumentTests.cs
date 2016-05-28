@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -12,8 +13,9 @@ namespace NConsole.Tests
             [Argument(Name = "MyStrings")]
             public string[] MyStrings { get; set; }
 
-            public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
+            public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
+                return null;
             }
         }
 
@@ -25,7 +27,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArrayCommand>("test");
 
             //// Act
-            var command = (MyArrayCommand)await processor.ProcessAsync(new string[] { "test", "/mystrings:a,b,c" });
+            var result = await processor.ProcessAsync(new string[] { "test", "/mystrings:a,b,c" });
+            var command = (MyArrayCommand)result.Last().Command;
 
             //// Assert
             Assert.AreEqual(3, command.MyStrings.Length);
@@ -36,11 +39,12 @@ namespace NConsole.Tests
 
         public class MyDefaultArrayCommand : IConsoleCommand
         {
-            [Argument(Name = "MyStrings", DefaultValue = new string[] { })]
-            public string[] MyStrings { get; set; }
+            [Argument(Name = "MyStrings", IsRequired = false)]
+            public string[] MyStrings { get; set; } = new string[] { };
 
-            public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
+            public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
+                return null;
             }
         }
 
@@ -52,7 +56,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyDefaultArrayCommand>("test");
 
             //// Act
-            var command = (MyDefaultArrayCommand)await processor.ProcessAsync(new string[] { "test" });
+            var result = await processor.ProcessAsync(new string[] { "test" });
+            var command = (MyDefaultArrayCommand)result.Last().Command;
 
             //// Assert
             Assert.AreEqual(0, command.MyStrings.Length);
@@ -60,11 +65,12 @@ namespace NConsole.Tests
 
         public class MyDefault2ArrayCommand : IConsoleCommand
         {
-            [Argument(Name = "MyStrings", DefaultValue = new string[] { "a", "b", "c" })]
-            public string[] MyStrings { get; set; }
+            [Argument(Name = "MyStrings", IsRequired = false)]
+            public string[] MyStrings { get; set; } = new string[] { "a", "b", "c" };
 
-            public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
+            public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
+                return null; 
             }
         }
 
@@ -76,7 +82,8 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyDefault2ArrayCommand>("test");
 
             //// Act
-            var command = (MyDefault2ArrayCommand)await processor.ProcessAsync(new string[] { "test" });
+            var result = await processor.ProcessAsync(new string[] { "test" });
+            var command = (MyDefault2ArrayCommand)result.Last().Command;
 
             //// Assert
             Assert.AreEqual(3, command.MyStrings.Length);

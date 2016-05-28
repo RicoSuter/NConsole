@@ -15,8 +15,10 @@ namespace NConsole
         /// <param name="consoleHost">The command line host.</param>
         /// <param name="args">The arguments.</param>
         /// <param name="property">The property.</param>
+        /// <param name="command">The command.</param>
+        /// <param name="input">The output from the previous command in the chain.</param>
         /// <returns>The value.</returns>
-        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property)
+        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input)
         {
             foreach (var argument in args)
             {

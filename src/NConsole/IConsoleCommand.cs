@@ -8,6 +8,7 @@ namespace NConsole
         /// <summary>Runs the command.</summary>
         /// <param name="processor">The processor.</param>
         /// <param name="host">The host.</param>
-        Task RunAsync(CommandLineProcessor processor, IConsoleHost host);
+        /// <returns>The output.</returns>
+        Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host);
     }
 }

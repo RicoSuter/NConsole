@@ -13,7 +13,9 @@ namespace NConsole
         /// <summary>Runs the command.</summary>
         /// <param name="processor">The processor.</param>
         /// <param name="host">The host.</param>
-        public Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
+        /// <param name="input">The output from the previous command.</param>
+        /// <returns>The input object for the next command.</returns>
+        public Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
         {
             foreach (var pair in processor.Commands)
             {
@@ -24,7 +26,7 @@ namespace NConsole
                 }
             }
 
-            return Task.FromResult(true);
+            return Task.FromResult<object>(null);
         }
 
         private void PrintCommand(IConsoleHost host, KeyValuePair<string, Type> pair)
@@ -43,7 +45,7 @@ namespace NConsole
             foreach (var property in commandType.GetRuntimeProperties())
             {
                 var argumentAttribute = property.GetCustomAttribute<ArgumentAttribute>();
-                if (argumentAttribute != null)
+                if (argumentAttribute != null && !string.IsNullOrEmpty(argumentAttribute.Name))
                 {
                     if (argumentAttribute.Position > 0)
                         host.WriteMessage("  Argument Position " + argumentAttribute.Position + "\n");

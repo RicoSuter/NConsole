@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -52,17 +54,18 @@ namespace NConsole.Tests
         public void When_first_argument_is_existing_command_name_then_command_is_executed()
         {
             //// Arrange
-            var resolver = new MyDependencyResolver(); 
+            var resolver = new MyDependencyResolver();
             var processor = new CommandLineProcessor(new ConsoleHost(), resolver);
             processor.RegisterCommand<MyCommand>("test");
 
             //// Act
-            var command = (MyCommand)processor.Process(new string[] { "test" });
+            var result = processor.Process(new string[] { "test" });
+            var command = (MyCommand)result.Last().Command;
 
             //// Assert
             Assert.IsNotNull(command);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public async Task When_dependency_resolver_is_missing_and_command_without_default_constructor_then_exception_is_thrown()
@@ -105,8 +108,9 @@ namespace NConsole.Tests
                 _state = state;
             }
 
-            public async Task RunAsync(CommandLineProcessor processor, IConsoleHost host)
+            public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
+                return null;
             }
         }
     }
