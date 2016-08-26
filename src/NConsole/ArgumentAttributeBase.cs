@@ -44,7 +44,7 @@ namespace NConsole
             if (type == typeof(DateTime))
                 return DateTime.Parse(value);
 
-            if (type.IsEnum)
+            if (type.GetTypeInfo().IsEnum)
                 return Enum.Parse(type, value, true);
 
             if (type == typeof(string[]))

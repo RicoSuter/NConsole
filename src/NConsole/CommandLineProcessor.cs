@@ -141,7 +141,7 @@ namespace NConsole
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
         private IConsoleCommand CreateCommand(Type commandType)
         {
-            var constructors = commandType.GetConstructors();
+            var constructors = commandType.GetTypeInfo().DeclaredConstructors;
             IConsoleCommand command;
 
             if (constructors.Any())

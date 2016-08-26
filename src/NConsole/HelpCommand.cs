@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -36,7 +35,7 @@ namespace NConsole
             host.WriteMessage("Command: ");
             host.WriteMessage(pair.Key + "\n");
 
-            var descriptionAttribute = commandType.GetCustomAttribute<DescriptionAttribute>();
+            dynamic descriptionAttribute = commandType.GetTypeInfo().GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DescriptionAttribute");
             if (descriptionAttribute != null)
                 host.WriteMessage("  " + descriptionAttribute.Description + "\n");
 
@@ -51,7 +50,7 @@ namespace NConsole
                     else
                         host.WriteMessage("  " + argumentAttribute.Name.ToLowerInvariant() + "\n");
 
-                    var parameterDescriptionAttribute = property.GetCustomAttribute<DescriptionAttribute>();
+                    dynamic parameterDescriptionAttribute = property.GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DescriptionAttribute");
                     if (parameterDescriptionAttribute != null)
                         host.WriteMessage("    " + parameterDescriptionAttribute.Description + "\n");
                 }

@@ -101,7 +101,7 @@ namespace NConsole
             var arg = args.FirstOrDefault(a => a.ToLowerInvariant().StartsWith("/" + Name.ToLowerInvariant() + ":"));
             if (arg != null)
             {
-                value = arg.Substring(arg.IndexOf(":", StringComparison.InvariantCulture) + 1);
+                value = arg.Substring(arg.IndexOf(":", StringComparison.Ordinal) + 1);
                 return true;
             }
 
@@ -115,7 +115,7 @@ namespace NConsole
             if (IsRequired == false)
                 name = "Type [default] to use default value: \"" + property.GetValue(command) + "\"\n" + name;
 
-            var descriptionAttribute = property.GetCustomAttribute<DescriptionAttribute>();
+            dynamic descriptionAttribute = property.GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DescriptionAttribute");
             if (descriptionAttribute != null)
                 name = descriptionAttribute.Description + "\n" + name;
 

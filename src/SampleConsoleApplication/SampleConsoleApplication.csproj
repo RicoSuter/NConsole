@@ -60,7 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NConsole\NConsole.csproj">
-      <Project>{BE91BD19-18CA-4A26-B946-CA29AC97E127}</Project>
+      <Project>{72219BBE-A7AE-4D69-B246-CB96AE266956}</Project>
       <Name>NConsole</Name>
     </ProjectReference>
   </ItemGroup>
