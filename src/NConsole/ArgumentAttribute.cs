@@ -115,6 +115,10 @@ namespace NConsole
             if (IsRequired == false)
                 name = "Type [default] to use default value: \"" + property.GetValue(command) + "\"\n" + name;
 
+            dynamic displayAttribute = property.GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DisplayAttribute");
+            if (displayAttribute != null && !string.IsNullOrEmpty(displayAttribute.Description))
+                name = displayAttribute.Description + "\n" + name;
+
             dynamic descriptionAttribute = property.GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DescriptionAttribute");
             if (descriptionAttribute != null)
                 name = descriptionAttribute.Description + "\n" + name;

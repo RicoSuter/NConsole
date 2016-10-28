@@ -10,6 +10,11 @@
     </metadata>
     <files>
         <file src="bin\Release\NConsole.dll" target="lib\net45" />
+        <file src="bin\Release\NConsole.pdb" target="lib\net45" />
         <file src="bin\Release\NConsole.xml" target="lib\net45" />
+
+        <file src="bin\Release\NConsole.dll" target="lib\netstandard1.0" />
+        <file src="bin\Release\NConsole.pdb" target="lib\netstandard1.0" />
+        <file src="bin\Release\NConsole.xml" target="lib\netstandard1.0" />
     </files>
 </package>
