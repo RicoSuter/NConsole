@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="ArgumentAttribute.cs" />
     <Compile Include="ArgumentAttributeBase.cs" />
+    <Compile Include="CommandAttribute.cs" />
     <Compile Include="CommandLineProcessor.cs" />
     <Compile Include="CommandResult.cs" />
     <Compile Include="ConsoleHost.cs" />

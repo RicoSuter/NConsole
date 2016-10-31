@@ -31,13 +31,25 @@ namespace NConsole
         {
             var commandType = pair.Value;
 
-            host.WriteMessage("---------------------\n");
+            host.WriteMessage("\n");
+            host.WriteMessage("USAGE\n");
+            host.WriteMessage("=====\n");
+            host.WriteMessage("myapp.exe myCommand /myParameter:myValue /mySecondParameter:myValue\n\n\n");
+
+            host.WriteMessage("AVAILABLE COMMANDS\n");
+            host.WriteMessage("==================\n\n");
             host.WriteMessage("Command: ");
             host.WriteMessage(pair.Key + "\n");
 
-            dynamic descriptionAttribute = commandType.GetTypeInfo().GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DescriptionAttribute");
-            if (descriptionAttribute != null)
-                host.WriteMessage("  " + descriptionAttribute.Description + "\n");
+            var commandAttribute = commandType.GetTypeInfo().GetCustomAttribute<CommandAttribute>();
+            if (commandAttribute != null && !string.IsNullOrEmpty(commandAttribute.Description))
+                host.WriteMessage("  " + commandAttribute.Description + "\n");
+            else
+            {
+                dynamic descriptionAttribute = commandType.GetTypeInfo().GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DescriptionAttribute");
+                if (descriptionAttribute != null)
+                    host.WriteMessage("  " + descriptionAttribute.Description + "\n");
+            }
 
             host.WriteMessage("\nArguments: \n");
             foreach (var property in commandType.GetRuntimeProperties())
@@ -48,7 +60,10 @@ namespace NConsole
                     if (argumentAttribute.Position > 0)
                         host.WriteMessage("  Argument Position " + argumentAttribute.Position + "\n");
                     else
-                        host.WriteMessage("  " + argumentAttribute.Name.ToLowerInvariant() + "\n");
+                        host.WriteMessage("  " + argumentAttribute.Name + "\n");
+
+                    if (!string.IsNullOrEmpty(argumentAttribute.Description))
+                        host.WriteMessage("    " + argumentAttribute.Description + "\n");
 
                     dynamic parameterDescriptionAttribute = property.GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DescriptionAttribute");
                     if (parameterDescriptionAttribute != null)

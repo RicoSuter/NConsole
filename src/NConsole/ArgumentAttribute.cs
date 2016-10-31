@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
@@ -11,6 +9,9 @@ namespace NConsole
     {
         /// <summary>Gets or sets the argument name.</summary>
         public string Name { get; set; }
+
+        /// <summary>Gets or sets the argument description.</summary>
+        public string Description { get; set; }
 
         /// <summary>Gets or sets the position of the unnamed argument.</summary>
         public int Position { get; set; }
@@ -96,7 +97,7 @@ namespace NConsole
             value = null;
 
             if (string.IsNullOrEmpty(Name))
-                return false; 
+                return false;
 
             var arg = args.FirstOrDefault(a => a.ToLowerInvariant().StartsWith("/" + Name.ToLowerInvariant() + ":"));
             if (arg != null)
@@ -115,13 +116,20 @@ namespace NConsole
             if (IsRequired == false)
                 name = "Type [default] to use default value: \"" + property.GetValue(command) + "\"\n" + name;
 
-            dynamic displayAttribute = property.GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DisplayAttribute");
-            if (displayAttribute != null && !string.IsNullOrEmpty(displayAttribute.Description))
-                name = displayAttribute.Description + "\n" + name;
-
-            dynamic descriptionAttribute = property.GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DescriptionAttribute");
-            if (descriptionAttribute != null)
-                name = descriptionAttribute.Description + "\n" + name;
+            if (!string.IsNullOrEmpty(Description))
+                name = Description + "\n" + name;
+            else
+            {
+                dynamic displayAttribute = property.GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DisplayAttribute");
+                if (displayAttribute != null && !string.IsNullOrEmpty(displayAttribute.Description))
+                    name = displayAttribute.Description + "\n" + name;
+                else
+                {
+                    dynamic descriptionAttribute = property.GetCustomAttributes().SingleOrDefault(a => a.GetType().Name == "DescriptionAttribute");
+                    if (descriptionAttribute != null)
+                        name = descriptionAttribute.Description + "\n" + name;
+                }
+            }
 
             return name + ": ";
         }

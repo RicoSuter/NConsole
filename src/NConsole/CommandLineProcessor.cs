@@ -37,6 +37,36 @@ namespace NConsole
         }
 
         /// <summary>Adds a command.</summary>
+        /// <typeparam name="TCommandLineCommand">The type of the command.</typeparam>
+        public void RegisterCommand<TCommandLineCommand>()
+            where TCommandLineCommand : IConsoleCommand
+        {
+            RegisterCommand(typeof(TCommandLineCommand));
+        }
+
+        /// <summary>Loads all commands from an assembly (command classes must have the CommandAttribute with a defined Name).</summary>
+        /// <param name="assembly">The assembly.</param>
+        public void RegisterCommandsFromAssembly(Assembly assembly)
+        {
+            var commandTypes = assembly.ExportedTypes.ToDictionary(t => t, t => t.GetTypeInfo().GetCustomAttribute<CommandAttribute>());
+            foreach (var pair in commandTypes.Where(p => !string.IsNullOrEmpty(p.Value?.Name) && p.Key.GetTypeInfo().IsClass && !p.Key.GetTypeInfo().IsAbstract))
+                RegisterCommand(pair.Value.Name, pair.Key);
+        }
+
+        /// <summary>Adds a command.</summary>
+        /// <param name="commandType">Type of the command.</param>
+        /// <exception cref="InvalidOperationException">The command has already been added.</exception>
+        /// <exception cref="InvalidOperationException">The command class is missing the CommandAttribute attribute.</exception>
+        public void RegisterCommand(Type commandType)
+        {
+            var commandAttribute = commandType.GetTypeInfo().GetCustomAttribute<CommandAttribute>(); 
+            if (commandAttribute == null)
+                throw new InvalidOperationException("The command class is missing the CommandAttribute attribute.");
+
+            RegisterCommand(commandAttribute.Name, commandType);
+        }
+
+        /// <summary>Adds a command.</summary>
         /// <param name="name">The name of the command.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <exception cref="InvalidOperationException">The command has already been added.</exception>
@@ -47,7 +77,7 @@ namespace NConsole
 
             _commands.Add(name.ToLowerInvariant(), commandType);
         }
-
+        
         /// <summary>Processes the command in the given command line arguments.</summary>
         /// <param name="args">The arguments.</param>
         /// <param name="input">The input for the first command.</param>

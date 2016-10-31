@@ -7,6 +7,10 @@ namespace NConsole
         /// <param name="message">The message.</param>
         void WriteMessage(string message);
 
+        /// <summary>Writes an error message.</summary>
+        /// <param name="message">The message.</param>
+        void WriteError(string message);
+
         /// <summary>Reads a value from the console.</summary>
         /// <param name="message">The message.</param>
         /// <returns>The value.</returns>
