@@ -49,13 +49,13 @@ namespace NConsole
                 return input;
 
             if (!IsInteractiveMode(args) && !IsRequired)
-                return property.GetValue(command);
+                return property.CanRead ? property.GetValue(command) : null;
 
             value = consoleHost.ReadValue(GetFullParameterDescription(property, command));
             if (value == "[default]")
             {
                 if (!IsRequired)
-                    return property.GetValue(command);
+                    return property.CanRead ? property.GetValue(command) : null;
 
                 throw new InvalidOperationException("The parameter '" + Name + "' is required.");
             }

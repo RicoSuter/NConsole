@@ -131,7 +131,8 @@ namespace NConsole
                     if (argumentAttribute != null)
                     {
                         var value = argumentAttribute.GetValue(_consoleHost, args, property, command, input);
-                        property.SetValue(command, value);
+                        if (value != null)
+                            property.SetValue(command, value);
                     }
                 }
 
