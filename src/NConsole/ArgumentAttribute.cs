@@ -70,22 +70,10 @@ namespace NConsole
 
         private bool TryGetPositionalArgumentValue(string[] args, out string value)
         {
-            if (Position > 0)
+            if (Position > 0 && Position < args.Length)
             {
-                var index = 0;
-                foreach (var argument in args)
-                {
-                    if (argument.StartsWith("/") || argument.StartsWith("-") || argument.StartsWith("--"))
-                        continue;
-
-                    if (index == Position)
-                    {
-                        value = argument;
-                        return true;
-                    }
-
-                    index++;
-                }
+                value = args[Position];
+                return true;
             }
 
             value = null;

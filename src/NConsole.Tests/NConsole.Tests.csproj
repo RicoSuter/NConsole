@@ -69,6 +69,7 @@
     <Compile Include="NamedArgumentTests.cs" />
     <Compile Include="CommandLineProcessorTests.cs" />
     <Compile Include="EnumArgumentTests.cs" />
+    <Compile Include="PositionArgumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
