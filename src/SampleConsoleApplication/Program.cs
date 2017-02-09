@@ -27,8 +27,8 @@ namespace SampleConsoleApplication
 
             public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
-                host.WriteMessage(string.Format("Clone {{ Repository={0}, Quiet={1} }}", Repository, Quiet));
-                return null; 
+                host.WriteMessage(string.Format("Clone {{ Repository={0}, Quiet={1}, Test={2} }}", Repository, Quiet, Test));
+                return null;
             }
         }
     }

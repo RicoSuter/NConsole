@@ -155,7 +155,7 @@ namespace NConsole
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
         public IList<CommandResult> Process(string[] args, object input = null)
         {
-            return ProcessAsync(args, input).Result;
+            return ProcessAsync(args, input).GetAwaiter().GetResult();
         }
 
         /// <summary>Gets the name of the command to execute.</summary>
