@@ -10,7 +10,7 @@ namespace NConsole
     public class HelpCommand : IConsoleCommand
     {
         /// <summary>Gets the command to print infos for (by default not set => prints all commands).</summary>
-        [Argument(Name = "Command", IsRequired = false, ShowPrompt = false)]
+        [Argument(Position = 1, IsRequired = false, ShowPrompt = false)]
         public string Command { get; set; }
 
         /// <summary>Runs the command.</summary>
