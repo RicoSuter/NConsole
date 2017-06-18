@@ -9,18 +9,40 @@ namespace NConsole
     /// <summary>The help command to show the availble list of commands.</summary>
     public class HelpCommand : IConsoleCommand
     {
+        /// <summary>Gets the command to print infos for (by default not set => prints all commands).</summary>
+        [Argument(Name = "Command", IsRequired = false, ShowPrompt = false)]
+        public string Command { get; set; }
+
         /// <summary>Runs the command.</summary>
         /// <param name="processor">The processor.</param>
         /// <param name="host">The host.</param>
         /// <returns>The input object for the next command.</returns>
         public Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
         {
-            foreach (var pair in processor.Commands)
+            if (!string.IsNullOrEmpty(Command))
             {
-                if (pair.Key != "help")
+                if (processor.Commands.ContainsKey(Command))
+                    PrintCommand(host, processor.Commands.Single(c => c.Key == Command));
+                else
+                    host.WriteMessage("Command '" + Command + "' could not be found...");
+            }
+            else
+            {
+                host.WriteMessage("\n");
+                host.WriteMessage("Usage:\n\n");
+                host.WriteMessage("  myapp.exe myCommand /myParameter:myValue /mySecondParameter:myValue\n\n");
+                host.WriteMessage("Commands:\n\n");
+                foreach (var command in processor.Commands.Where(c => c.Key != "help"))
+                    host.WriteMessage("  " + command.Key + "\n");
+                host.ReadValue("Press <enter> key to show commands...");
+
+                foreach (var command in processor.Commands)
                 {
-                    PrintCommand(host, pair);
-                    host.ReadValue("Press <enter> key for next command...");
+                    if (command.Key != "help")
+                    {
+                        PrintCommand(host, command);
+                        host.ReadValue("Press <enter> key for next command...");
+                    }
                 }
             }
 
@@ -31,14 +53,7 @@ namespace NConsole
         {
             var commandType = pair.Value;
 
-            host.WriteMessage("\n");
-            host.WriteMessage("USAGE\n");
-            host.WriteMessage("=====\n");
-            host.WriteMessage("myapp.exe myCommand /myParameter:myValue /mySecondParameter:myValue\n\n\n");
-
-            host.WriteMessage("AVAILABLE COMMANDS\n");
-            host.WriteMessage("==================\n\n");
-            host.WriteMessage("Command: ");
+            host.WriteMessage("\nCommand: ");
             host.WriteMessage(pair.Key + "\n");
 
             var commandAttribute = commandType.GetTypeInfo().GetCustomAttribute<CommandAttribute>();

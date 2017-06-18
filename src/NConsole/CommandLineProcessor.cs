@@ -164,7 +164,13 @@ namespace NConsole
         protected string GetCommandName(string[] args)
         {
             if (args.Length == 0)
+            {
+                _consoleHost.WriteMessage("Commands: \n");
+                foreach (var command in Commands)
+                    _consoleHost.WriteMessage("  " + command.Key + "\n");
+                
                 return _consoleHost.ReadValue("Command: ").ToLowerInvariant();
+            }
 
             return args[0].ToLowerInvariant();
         }

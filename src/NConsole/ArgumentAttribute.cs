@@ -22,6 +22,9 @@ namespace NConsole
         /// <summary>Gets or sets a value indicating whether the argument accepts an input from a previous command (default: false).</summary>
         public bool AcceptsCommandInput { get; set; } = false;
 
+        /// <summary>Gets or sets a value indicating whether to prompt the user for the value.</summary>
+        public bool ShowPrompt { get; set; } = true;
+
         /// <summary>Gets the argument value.</summary>
         /// <param name="consoleHost">The command line host.</param>
         /// <param name="args">The arguments.</param>
@@ -51,16 +54,21 @@ namespace NConsole
             if (!IsInteractiveMode(args) && !IsRequired)
                 return property.CanRead ? property.GetValue(command) : null;
 
-            value = consoleHost.ReadValue(GetFullParameterDescription(property, command));
-            if (value == "[default]")
+            if (ShowPrompt)
             {
-                if (!IsRequired)
-                    return property.CanRead ? property.GetValue(command) : null;
+                value = consoleHost.ReadValue(GetFullParameterDescription(property, command));
+                if (value == "[default]")
+                {
+                    if (!IsRequired)
+                        return property.CanRead ? property.GetValue(command) : null;
 
-                throw new InvalidOperationException("The parameter '" + Name + "' is required.");
+                    throw new InvalidOperationException("The parameter '" + Name + "' is required.");
+                }
+
+                return ConvertToType(value, property.PropertyType);
             }
-
-            return ConvertToType(value, property.PropertyType);
+            else
+                return property.CanRead ? property.GetValue(command) : null;
         }
 
         private bool IsInteractiveMode(string[] args)
