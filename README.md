@@ -42,7 +42,7 @@ The usage is simple: Create an instance of the `CommandLineProcessor` class, reg
             [Argument(Name = "SecondValue", IsRequired = false)]
             public int SecondValue { get; set; } = 10;
 
-            public async Task<object> RunAsync Run(CommandLineProcessor processor, IConsoleHost host)
+            public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
                 host.WriteMessage((FirstValue + SecondValue).ToString());
                 return null;
