@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace NConsole.Tests
 {
     [TestClass]
-    public class ChaningTests
+    public class ChainingTests
     {
         public class SumCommand : IConsoleCommand
         {
