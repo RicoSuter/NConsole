@@ -180,7 +180,7 @@ namespace NConsole
         /// <returns>The command name.</returns>
         protected string GetCommandName(string[] args)
         {
-            if (args.Length == 0)
+            if (args.Length == 0 || args[0].Length == 0 || !char.IsLetter(args[0][0]))
             {
                 _consoleHost.WriteMessage("Commands: \n");
                 foreach (var command in Commands)
