@@ -19,7 +19,7 @@ namespace NConsole
         /// <returns>The input object for the next command.</returns>
         public Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
         {
-            if (!string.IsNullOrEmpty(Command))
+            if (!string.IsNullOrEmpty(Command) && char.IsLetter(Command[0]))
             {
                 if (processor.Commands.ContainsKey(Command))
                     PrintCommand(host, processor.Commands.Single(c => c.Key == Command));

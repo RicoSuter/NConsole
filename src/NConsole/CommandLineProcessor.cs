@@ -158,6 +158,23 @@ namespace NConsole
             return ProcessAsync(args, input).GetAwaiter().GetResult();
         }
 
+        /// <summary>Processes the command in the given command line arguments.</summary>
+        /// <param name="args">The arguments.</param>
+        /// <param name="input">The output from the previous command.</param>
+        /// <returns>The exeucuted command.</returns>
+        public IList<CommandResult> ProcessWithExceptionHandling(string[] args, object input = null)
+        {
+            try
+            {
+                return ProcessAsync(args, input).GetAwaiter().GetResult();
+            }
+            catch (Exception e)
+            {
+                _consoleHost.WriteError(e.ToString());
+                return null;
+            }
+        }
+
         /// <summary>Gets the name of the command to execute.</summary>
         /// <param name="args">The arguments.</param>
         /// <returns>The command name.</returns>

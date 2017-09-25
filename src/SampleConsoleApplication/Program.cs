@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using NConsole;
 
@@ -8,9 +9,9 @@ namespace SampleConsoleApplication
     {
         static void Main(string[] args)
         {
-            var processor = new CommandLineProcessor(new ConsoleHost());
+            var processor = new CommandLineProcessor(new ConsoleHost(!args.Contains("/noninteractive")));
             processor.RegisterCommand<CloneCommand>("clone");
-            processor.Process(args);
+            processor.ProcessWithExceptionHandling(args);
             Console.ReadKey();
         }
 
