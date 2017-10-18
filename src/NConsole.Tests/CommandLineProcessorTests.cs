@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -60,7 +59,7 @@ namespace NConsole.Tests
 
             //// Act
             var result = processor.Process(new string[] { "test" });
-            var command = (MyCommand)result.Last().Command;
+            var command = result.Last().Command as MyCommand;
 
             //// Assert
             Assert.IsNotNull(command);
@@ -78,6 +77,37 @@ namespace NConsole.Tests
             await processor.ProcessAsync(new string[] { "test" }); // exception
 
             //// Assert
+        }
+
+        [TestMethod]
+        public void When_no_dependency_resolver_is_present_static_ctor_is_not_used()
+        {
+            //// Arrange
+            var processor = new CommandLineProcessor(new ConsoleHost());
+            processor.RegisterCommand<CommandWithStaticCtor>("test");
+
+            //// Act
+            var result = processor.Process(new string[] { "test" });
+            var command = result.Last().Command as CommandWithStaticCtor;
+
+            //// Assert
+            Assert.IsNotNull(command);
+        }
+
+        [TestMethod]
+        public void When_dependency_resolver_is_present_static_ctor_is_not_used()
+        {
+            //// Arrange
+            var resolver = new MyDependencyResolver();      
+            var processor = new CommandLineProcessor(new ConsoleHost(), resolver);
+            processor.RegisterCommand<MyCommandWithStaticCtor>("test");
+
+            //// Act
+            var result = processor.Process(new string[] { "test" });
+            var command = result.Last().Command as MyCommandWithStaticCtor;
+
+            //// Assert
+            Assert.IsNotNull(command);
         }
 
         public class MyDependencyResolver : IDependencyResolver
@@ -110,6 +140,38 @@ namespace NConsole.Tests
 
             public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
             {
+                return null;
+            }
+        }
+
+        public class MyCommandWithStaticCtor : MyCommand
+        {
+
+            private static int _aStaticMember;
+
+            static MyCommandWithStaticCtor()
+            {
+                _aStaticMember = 27;
+            }
+
+            public MyCommandWithStaticCtor(MyState state)
+                :base(state)
+            {}
+        }
+
+        public class CommandWithStaticCtor : IConsoleCommand
+        {
+
+            private static int _aStaticMember;
+
+            static CommandWithStaticCtor()
+            {
+                _aStaticMember = 27;
+            }
+
+            public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
+            {
+                Assert.AreEqual( 27, _aStaticMember);
                 return null;
             }
         }
