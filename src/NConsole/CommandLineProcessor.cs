@@ -200,7 +200,7 @@ namespace NConsole
 
             if (constructors.Any())
             {
-                var constructor = constructors.First();
+                var constructor = constructors.First(c => !c.IsStatic);
 
                 if (constructor.GetParameters().Length > 0 && _dependencyResolver == null)
                     throw new InvalidOperationException("No dependency resolver available to create a command without default constructor.");
