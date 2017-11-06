@@ -27,6 +27,9 @@ namespace NConsole
 
                 if (argument == "--" + LongName)
                     return true;
+
+                if (argument == "/" + LongName)
+                    return true;
             }
 
             return false; 
