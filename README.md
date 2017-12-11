@@ -19,36 +19,38 @@ Features:
 
 The usage is simple: Create an instance of the `CommandLineProcessor` class, register the commands and execute a command by calling the `Process()` method with the command line arguments.
 
-    namespace MyApplication
+```csharp
+namespace MyApplication
+{
+    class Program
     {
-        class Program
+        static void Main(string[] args)
         {
-            static void Main(string[] args)
-            {
-                var processor = new CommandLineProcessor(new ConsoleHost());
-                processor.RegisterCommand<SumCommand>("sum");
-                processor.Process(args);
-            }
-        }
-
-        [Description("Calculates the sum of two values.")]
-        public class SumCommand : IConsoleCommand
-        {
-            [Description("The first value.")]
-            [Argument(Name = "FirstValue")]
-            public int FirstValue { get; set; }
-
-            [Description("The second value.")]
-            [Argument(Name = "SecondValue", IsRequired = false)]
-            public int SecondValue { get; set; } = 10;
-
-            public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
-            {
-                host.WriteMessage((FirstValue + SecondValue).ToString());
-                return null;
-            }
+            var processor = new CommandLineProcessor(new ConsoleHost());
+            processor.RegisterCommand<SumCommand>("sum");
+            processor.Process(args);
         }
     }
+
+    [Description("Calculates the sum of two values.")]
+    public class SumCommand : IConsoleCommand
+    {
+        [Description("The first value.")]
+        [Argument(Name = "FirstValue")]
+        public int FirstValue { get; set; }
+
+        [Description("The second value.")]
+        [Argument(Name = "SecondValue", IsRequired = false)]
+        public int SecondValue { get; set; } = 10;
+
+        public async Task<object> RunAsync(CommandLineProcessor processor, IConsoleHost host)
+        {
+            host.WriteMessage((FirstValue + SecondValue).ToString());
+            return null;
+        }
+    }
+}
+```
 
 The command `sum` can now be executed using the following command line call:
 
