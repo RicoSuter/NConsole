@@ -31,23 +31,32 @@ namespace NConsole
         /// <param name="property">The property.</param>
         /// <param name="command">The command.</param>
         /// <param name="input">The output from the previous command in the chain.</param>
+        /// <param name="used">Indicates whether a value for the property was found in the given arguments.</param>
         /// <returns>The value.</returns>
         /// <exception cref="System.InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
         /// <exception cref="InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
         /// <exception cref="InvalidOperationException">The parameter has no default value.</exception>
-        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input)
+        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input, out bool used)
         {
             if (!string.IsNullOrEmpty(Name) && Position > 0)
                 throw new InvalidOperationException("Either the argument Name or Position can be set, but not both.");
 
+            used = false;
             string value = null;
 
             if (TryGetPositionalArgumentValue(args, out value))
+            {
+                used = true;
                 return ConvertToType(value, property.PropertyType);
+            }
+                
 
             if (TryGetNamedArgumentValue(args, out value))
+            {
+                used = true;
                 return ConvertToType(value, property.PropertyType);
-
+            }
+                
             if (AcceptsCommandInput && input != null)
                 return input;
 
