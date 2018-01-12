@@ -71,6 +71,7 @@
     <Compile Include="EnumArgumentTests.cs" />
     <Compile Include="PositionArgumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnexpectedArgumentsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\NConsole.snk">

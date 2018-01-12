@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace NConsole
 {
+    /// <summary>An provided argument is not used.</summary>
+    public class UnusedArgumentException : Exception
+    {
+        internal UnusedArgumentException()
+            : base(string.Format("Unrecognised arguments are present."))
+        { }
+    }
+
     /// <summary>A command base command line processor.</summary>
     public class CommandLineProcessor
     {
@@ -119,6 +127,7 @@ namespace NConsole
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
         public async Task<CommandResult> ProcessSingleAsync(string[] args, object input = null)
         {
+            var countOfArgsUsed = 0;
             var commandName = GetCommandName(args);
             if (_commands.ContainsKey(commandName))
             {
@@ -127,14 +136,20 @@ namespace NConsole
 
                 foreach (var property in commandType.GetRuntimeProperties())
                 {
+                    var used = false;
                     var argumentAttribute = property.GetCustomAttribute<ArgumentAttributeBase>();
                     if (argumentAttribute != null)
                     {
-                        var value = argumentAttribute.GetValue(_consoleHost, args, property, command, input);
+                        var value = argumentAttribute.GetValue(_consoleHost, args, property, command, input, out used);
                         if (value != null)
                             property.SetValue(command, value);
+                        if (used)
+                            countOfArgsUsed++;
                     }
                 }
+
+                if (countOfArgsUsed != args.Length - 1)
+                    throw new UnusedArgumentException();
 
                 var output = await command.RunAsync(this, _consoleHost);
                 return new CommandResult

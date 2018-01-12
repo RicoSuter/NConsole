@@ -18,8 +18,9 @@ namespace NConsole
         /// <param name="command">The command.</param>
         /// <param name="input">The output from the previous command in the chain.</param>
         /// <returns>The value.</returns>
-        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input)
+        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input, out bool used)
         {
+            used = true;
             foreach (var argument in args)
             {
                 if (argument == "-" + ShortName)
@@ -32,6 +33,7 @@ namespace NConsole
                     return true;
             }
 
+            used = false;
             return false; 
         }
     }
