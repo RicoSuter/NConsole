@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace NConsole
 {
-    internal class UnusedArgumentException : Exception
+    /// <summary>An provided argument is not used.</summary>
+    public class UnusedArgumentException : Exception
     {
-        public UnusedArgumentException()
+        internal UnusedArgumentException()
             : base(string.Format("Unrecognised arguments are present."))
         { }
     }
+
     /// <summary>A command base command line processor.</summary>
     public class CommandLineProcessor
     {
