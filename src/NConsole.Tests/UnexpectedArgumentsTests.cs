@@ -44,7 +44,7 @@ namespace NConsole.Tests
             }
             catch (UnusedArgumentException ex)
             {
-                Assert.AreEqual(ex.Message, "Unrecognised arguments are present.");
+                Assert.AreEqual(ex.Message, "Unrecognised arguments are present: [12:13:14]");
             }
         }
 
@@ -64,7 +64,7 @@ namespace NConsole.Tests
             }
             catch (UnusedArgumentException ex)
             {
-                Assert.AreEqual(ex.Message, "Unrecognised arguments are present.");
+                Assert.AreEqual(ex.Message, "Unrecognised arguments are present: [second, third]");
             }
         }
 

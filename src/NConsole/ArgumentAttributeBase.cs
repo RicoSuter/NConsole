@@ -13,7 +13,7 @@ namespace NConsole
         /// <param name="command"></param>
         /// <param name="input">The output from the previous command in the chain.</param>
         /// <returns>The value.</returns>
-        public abstract object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input, out bool used);
+        public abstract object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input, out string used);
 
         /// <summary>Converts a string value to a specific type.</summary>
         /// <param name="value">The value.</param>
