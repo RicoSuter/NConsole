@@ -44,7 +44,7 @@ namespace NConsole.Tests
             }
             catch (UnusedArgumentException ex)
             {
-                Assert.AreEqual(ex.Message, "Unrecognised arguments are present.");
+                Assert.AreEqual(ex.Message, "Unrecognised arguments are present: [12:13:14]");
             }
         }
 
@@ -58,13 +58,13 @@ namespace NConsole.Tests
             ////Act
             try
             {
-                var result = await processor.ProcessAsync(new string[] { "test", "first", "second", "third" });
+                var result = await processor.ProcessAsync(new string[] { "test", "first", "second", "/third:third", "/Fourth" });
                 var command = (MyArgumentCommand)result.Last().Command;
                 Assert.Fail();
             }
             catch (UnusedArgumentException ex)
             {
-                Assert.AreEqual(ex.Message, "Unrecognised arguments are present.");
+                Assert.AreEqual(ex.Message, "Unrecognised arguments are present: [second, /third:third, /Fourth]");
             }
         }
 

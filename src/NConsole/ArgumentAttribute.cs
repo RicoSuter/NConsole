@@ -36,24 +36,21 @@ namespace NConsole
         /// <exception cref="System.InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
         /// <exception cref="InvalidOperationException">Either the argument Name or Position can be set, but not both.</exception>
         /// <exception cref="InvalidOperationException">The parameter has no default value.</exception>
-        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input, out bool used)
+        public override object GetValue(IConsoleHost consoleHost, string[] args, PropertyInfo property, IConsoleCommand command, object input, out string used)
         {
             if (!string.IsNullOrEmpty(Name) && Position > 0)
                 throw new InvalidOperationException("Either the argument Name or Position can be set, but not both.");
 
-            used = false;
+            used = null;
             string value = null;
 
-            if (TryGetPositionalArgumentValue(args, out value))
+            if (TryGetPositionalArgumentValue(args, ref used, out value))
             {
-                used = true;
                 return ConvertToType(value, property.PropertyType);
             }
                 
-
-            if (TryGetNamedArgumentValue(args, out value))
+            if (TryGetNamedArgumentValue(args, ref used, out value))
             {
-                used = true;
                 return ConvertToType(value, property.PropertyType);
             }
                 
@@ -85,11 +82,12 @@ namespace NConsole
             return args.Length == 0;
         }
 
-        private bool TryGetPositionalArgumentValue(string[] args, out string value)
+        private bool TryGetPositionalArgumentValue(string[] args, ref string used, out string value)
         {
             if (Position > 0 && Position < args.Length)
             {
                 value = args[Position];
+                used = value;
                 return true;
             }
 
@@ -97,7 +95,7 @@ namespace NConsole
             return false;
         }
 
-        private bool TryGetNamedArgumentValue(string[] args, out string value)
+        private bool TryGetNamedArgumentValue(string[] args, ref string used, out string value)
         {
             value = null;
 
@@ -108,6 +106,7 @@ namespace NConsole
             if (arg != null)
             {
                 value = arg.Substring(arg.IndexOf(":", StringComparison.Ordinal) + 1);
+                used = arg;
                 return true;
             }
 

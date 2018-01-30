@@ -9,8 +9,8 @@ namespace NConsole
     /// <summary>An provided argument is not used.</summary>
     public class UnusedArgumentException : Exception
     {
-        internal UnusedArgumentException()
-            : base(string.Format("Unrecognised arguments are present."))
+        internal UnusedArgumentException(string arg)
+            : base(string.Format($"Unrecognised arguments are present: [{arg}]"))
         { }
     }
 
@@ -127,7 +127,7 @@ namespace NConsole
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>
         public async Task<CommandResult> ProcessSingleAsync(string[] args, object input = null)
         {
-            var countOfArgsUsed = 0;
+            var usedArgs = new List<string>();
             var commandName = GetCommandName(args);
             if (_commands.ContainsKey(commandName))
             {
@@ -136,20 +136,31 @@ namespace NConsole
 
                 foreach (var property in commandType.GetRuntimeProperties())
                 {
-                    var used = false;
+                    string usedArg = null;
                     var argumentAttribute = property.GetCustomAttribute<ArgumentAttributeBase>();
                     if (argumentAttribute != null)
                     {
-                        var value = argumentAttribute.GetValue(_consoleHost, args, property, command, input, out used);
+                        var value = argumentAttribute.GetValue(_consoleHost, args, property, command, input, out usedArg);
                         if (value != null)
                             property.SetValue(command, value);
-                        if (used)
-                            countOfArgsUsed++;
+                        if (usedArg != null)
+                            usedArgs.Add(usedArg);
                     }
                 }
 
-                if (countOfArgsUsed != args.Length - 1)
-                    throw new UnusedArgumentException();
+                if (usedArgs.Count != args.Length - 1)
+                {
+                    var unusedArgs = new List<string>();
+                    foreach (string arg in args)
+                    {
+                        if (!usedArgs.Contains(arg) && commandName != arg)
+                        {
+                            unusedArgs.Add(arg);
+                        }
+                    }
+                    throw new UnusedArgumentException(string.Join(", ", unusedArgs));
+                }
+                    
 
                 var output = await command.RunAsync(this, _consoleHost);
                 return new CommandResult
