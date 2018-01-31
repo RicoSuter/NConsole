@@ -67,7 +67,7 @@ namespace NConsole
         /// <exception cref="InvalidOperationException">The command class is missing the CommandAttribute attribute.</exception>
         public void RegisterCommand(Type commandType)
         {
-            var commandAttribute = commandType.GetTypeInfo().GetCustomAttribute<CommandAttribute>(); 
+            var commandAttribute = commandType.GetTypeInfo().GetCustomAttribute<CommandAttribute>();
             if (commandAttribute == null)
                 throw new InvalidOperationException("The command class is missing the CommandAttribute attribute.");
 
@@ -85,7 +85,7 @@ namespace NConsole
 
             _commands.Add(name.ToLowerInvariant(), commandType);
         }
-        
+
         /// <summary>Processes the command in the given command line arguments.</summary>
         /// <param name="args">The arguments.</param>
         /// <param name="input">The input for the first command.</param>
@@ -153,14 +153,14 @@ namespace NConsole
                     var unusedArgs = new List<string>();
                     foreach (string arg in args)
                     {
-                        if (!usedArgs.Contains(arg) && commandName != arg)
+                        if (!usedArgs.Contains(arg) && !commandName.Equals(arg, StringComparison.OrdinalIgnoreCase))
                         {
                             unusedArgs.Add(arg);
                         }
                     }
+
                     throw new UnusedArgumentException(string.Join(", ", unusedArgs));
                 }
-                    
 
                 var output = await command.RunAsync(this, _consoleHost);
                 return new CommandResult
@@ -211,7 +211,7 @@ namespace NConsole
                 _consoleHost.WriteMessage("Commands: \n");
                 foreach (var command in Commands)
                     _consoleHost.WriteMessage("  " + command.Key + "\n");
-                
+
                 return _consoleHost.ReadValue("Command: ").ToLowerInvariant();
             }
 
