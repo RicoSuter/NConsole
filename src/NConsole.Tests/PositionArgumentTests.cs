@@ -1,10 +1,9 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace NConsole.Tests
 {
-    [TestClass]
     public class PositionArgumentTests
     {
         public class MyCommand : IConsoleCommand
@@ -18,7 +17,7 @@ namespace NConsole.Tests
             }
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_positional_argument_starts_with_slash_then_it_is_correctly_read()
         {
             //// Arrange
@@ -26,11 +25,11 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/foo/bar/test.cs" });
+            var result = await processor.ProcessAsync(new[] { "test", "/foo/bar/test.cs" });
             var command = (MyCommand)result.Last().Command;
 
             //// Assert
-            Assert.AreEqual("/foo/bar/test.cs", command.First);
+            Assert.Equal("/foo/bar/test.cs", command.First);
         }
     }
 }

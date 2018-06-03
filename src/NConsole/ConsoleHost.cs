@@ -6,7 +6,7 @@ namespace NConsole
     /// <summary>A command line host implementation which uses System.Console.</summary>
     public class ConsoleHost : IConsoleHost
     {
-        private readonly Type _consoleType = Type.GetType("System.Console", true);
+        private readonly Type _consoleType = typeof(Console);
         private readonly MethodInfo _consoleWriteMethod;
         private readonly MethodInfo _consoleReadLineMethod;
         private readonly PropertyInfo _consoleForegroundColorProperty;

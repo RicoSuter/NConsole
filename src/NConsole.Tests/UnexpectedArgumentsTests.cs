@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace NConsole.Tests
 {
-    [TestClass]
     public class UnexpectedArgumentsTests
     {
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_full_datetime_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -16,19 +15,19 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             ////Act
-            var result = await processor.ProcessAsync(new string[] { "test", "first", "/datetime:2014-5-3 12:13:14", "/TestSwitch" });
+            var result = await processor.ProcessAsync(new[] { "test", "first", "/datetime:2014-5-3 12:13:14", "/TestSwitch" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.AreEqual(14, command.DateTime.Second);
-            Assert.AreEqual(13, command.DateTime.Minute);
-            Assert.AreEqual(12, command.DateTime.Hour);
-            Assert.AreEqual(3, command.DateTime.Day);
-            Assert.AreEqual(5, command.DateTime.Month);
-            Assert.AreEqual(2014, command.DateTime.Year);
+            Assert.Equal(14, command.DateTime.Second);
+            Assert.Equal(13, command.DateTime.Minute);
+            Assert.Equal(12, command.DateTime.Hour);
+            Assert.Equal(3, command.DateTime.Day);
+            Assert.Equal(5, command.DateTime.Month);
+            Assert.Equal(2014, command.DateTime.Year);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_incorrect_full_datetime_parameter_then_exception_is_thrown()
         {
             //// Arrange
@@ -36,36 +35,34 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             ////Act
-            try
+            async Task ProcessAsyncThrowsException()
             {
-                var result = await processor.ProcessAsync(new string[] { "test", "first", "/datetime:2014-5-3", "12:13:14", "/TestSwitch" });
+                var result = await processor.ProcessAsync(new [] { "test", "first", "/datetime:2014-5-3", "12:13:14", "/TestSwitch" });
                 var command = (MyArgumentCommand)result.Last().Command;
-                Assert.Fail();
             }
-            catch (UnusedArgumentException ex)
-            {
-                Assert.AreEqual(ex.Message, "Unrecognised arguments are present: [12:13:14]");
-            }
+
+            //// Assert
+            var exception = await Assert.ThrowsAsync<UnusedArgumentException>(async () => await ProcessAsyncThrowsException());
+            Assert.Equal("Unrecognised arguments are present: [12:13:14]", exception.Message);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_unexpected_arguments_then_exception_is_thrown()
         {
             //// Arrange
             var processor = new CommandLineProcessor(new ConsoleHost());
             processor.RegisterCommand<MyArgumentCommand>("test");
 
-            ////Act
-            try
+            //// Act
+            async Task ProcessAsyncThrowsException()
             {
-                var result = await processor.ProcessAsync(new string[] { "test", "first", "second", "/third:third", "/Fourth" });
+                var result = await processor.ProcessAsync(new [] { "test", "first", "second", "/third:third", "/Fourth" });
                 var command = (MyArgumentCommand)result.Last().Command;
-                Assert.Fail();
             }
-            catch (UnusedArgumentException ex)
-            {
-                Assert.AreEqual(ex.Message, "Unrecognised arguments are present: [second, /third:third, /Fourth]");
-            }
+
+            //// Assert
+            var exception = await Assert.ThrowsAsync<UnusedArgumentException>(async () => await ProcessAsyncThrowsException());
+            Assert.Equal("Unrecognised arguments are present: [second, /third:third, /Fourth]", exception.Message);
         }
 
         public class MyArgumentCommand : IConsoleCommand

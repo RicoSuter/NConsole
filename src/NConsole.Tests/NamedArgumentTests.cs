@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace NConsole.Tests
 {
-    [TestClass]
     public class NamedArgumentTests
     {
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_uint16_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -16,14 +15,14 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/uint16:123" });
+            var result = await processor.ProcessAsync(new[] { "test", "/uint16:123" });
             var command = (MyArgumentCommand)result.Last().Command; 
 
             //// Assert
-            Assert.IsTrue(123 == command.UInt16);
+            Assert.True(123 == command.UInt16);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_uint32_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -31,14 +30,14 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/uint32:123" });
+            var result = await processor.ProcessAsync(new[] { "test", "/uint32:123" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.IsTrue(123 == command.UInt32);
+            Assert.True(123 == command.UInt32);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_uint64_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -46,14 +45,14 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/uint64:123" });
+            var result = await processor.ProcessAsync(new[] { "test", "/uint64:123" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.IsTrue(123 == command.UInt64);
+            Assert.True(123 == command.UInt64);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_int16_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -61,14 +60,14 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/int16:123" });
+            var result = await processor.ProcessAsync(new[] { "test", "/int16:123" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.IsTrue(123 == command.Int16);
+            Assert.True(123 == command.Int16);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_int32_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -76,14 +75,14 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/int32:123" });
+            var result = await processor.ProcessAsync(new[] { "test", "/int32:123" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.IsTrue(123 == command.Int32);
+            Assert.True(123 == command.Int32);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_int64_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -91,14 +90,14 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/int64:123" });
+            var result = await processor.ProcessAsync(new[] { "test", "/int64:123" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.IsTrue(123 == command.Int64);
+            Assert.True(123 == command.Int64);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_decimal_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -106,14 +105,14 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/decimal:123" });
+            var result = await processor.ProcessAsync(new[] { "test", "/decimal:123" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.IsTrue(123 == command.Decimal);
+            Assert.True(123 == command.Decimal);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_boolean_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -121,14 +120,14 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/boolean:true" });
+            var result = await processor.ProcessAsync(new[] { "test", "/boolean:true" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.IsTrue(command.Boolean);
+            Assert.True(command.Boolean);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_datetime_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -136,16 +135,16 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/datetime:2014-5-3" });
+            var result = await processor.ProcessAsync(new[] { "test", "/datetime:2014-5-3" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.AreEqual(3, command.DateTime.Day);
-            Assert.AreEqual(5, command.DateTime.Month);
-            Assert.AreEqual(2014, command.DateTime.Year);
+            Assert.Equal(3, command.DateTime.Day);
+            Assert.Equal(5, command.DateTime.Month);
+            Assert.Equal(2014, command.DateTime.Year);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_string_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -153,14 +152,14 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/string:abc" });
+            var result = await processor.ProcessAsync(new[] { "test", "/string:abc" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.AreEqual("abc", command.String);
+            Assert.Equal("abc", command.String);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task When_running_command_with_quoted_string_parameter_then_they_are_correctly_set()
         {
             //// Arrange
@@ -168,11 +167,11 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyArgumentCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/string:abc def" });
+            var result = await processor.ProcessAsync(new[] { "test", "/string:abc def" });
             var command = (MyArgumentCommand)result.Last().Command;
 
             //// Assert
-            Assert.AreEqual("abc def", command.String);
+            Assert.Equal("abc def", command.String);
         }
 
         public class MyArgumentCommand : IConsoleCommand
