@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace NConsole.Tests
 {
-    [TestClass]
     public class EnumArgumentTests
     {
-        [TestMethod]
+        [Fact]
         public async Task WhenArgumentIsEnumThenItShouldBeLoadedCorrectly()
         {
             //// Arrange
@@ -16,11 +14,11 @@ namespace NConsole.Tests
             processor.RegisterCommand<MyEnumCommand>("test");
 
             //// Act
-            var result = await processor.ProcessAsync(new string[] { "test", "/myenum:def" });
+            var result = await processor.ProcessAsync(new[] { "test", "/myenum:def" });
             var command = (MyEnumCommand)result.Last().Command; 
 
             //// Assert
-            Assert.AreEqual(MyEnum.Def, command.MyEnum);
+            Assert.Equal(MyEnum.Def, command.MyEnum);
         }
     }
 
