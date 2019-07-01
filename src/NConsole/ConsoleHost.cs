@@ -8,6 +8,7 @@ namespace NConsole
     {
         private readonly Type _consoleType = typeof(Console);
         private readonly MethodInfo _consoleWriteMethod;
+        private readonly MethodInfo _consoleWriteLineMethod;
         private readonly MethodInfo _consoleReadLineMethod;
         private readonly PropertyInfo _consoleForegroundColorProperty;
 
@@ -15,6 +16,7 @@ namespace NConsole
         public ConsoleHost()
         {
             _consoleWriteMethod = _consoleType.GetRuntimeMethod("Write", new[] { typeof(string) });
+            _consoleWriteLineMethod = _consoleType.GetRuntimeMethod("WriteLine", new[] { typeof(string) });
             _consoleReadLineMethod = _consoleType.GetRuntimeMethod("ReadLine", new Type[] { });
             _consoleForegroundColorProperty = _consoleType.GetRuntimeProperty("ForegroundColor");
         }
@@ -36,6 +38,14 @@ namespace NConsole
         {
             _consoleWriteMethod.Invoke(null, new object[] { message });
         }
+
+        /// <summary>Writes a line to the console.</summary>
+        /// <param name="line">The line.</param>
+        public void WriteLine(string line)
+        {
+            _consoleWriteLineMethod.Invoke(null, new object[] { line });
+        }
+
 
         /// <summary>Writes an error message to the console.</summary>
         /// <param name="message">The message.</param>

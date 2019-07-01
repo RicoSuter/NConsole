@@ -13,6 +13,11 @@ namespace NConsole
         [Argument(Position = 1, IsRequired = false, ShowPrompt = false)]
         public string Command { get; set; }
 
+        /// <summary>
+        /// Usage line of help command.
+        /// </summary>
+        public string Usage { get; set; } = "  myapp.exe myCommand /myParameter:myValue /mySecondParameter:myValue\n\n";
+
         /// <summary>Runs the command.</summary>
         /// <param name="processor">The processor.</param>
         /// <param name="host">The host.</param>
@@ -30,23 +35,36 @@ namespace NConsole
             {
                 host.WriteMessage("\n");
                 host.WriteMessage("Usage:\n\n");
-                host.WriteMessage("  myapp.exe myCommand /myParameter:myValue /mySecondParameter:myValue\n\n");
+                host.WriteMessage(Usage);
                 host.WriteMessage("Commands:\n\n");
                 foreach (var command in processor.Commands.Where(c => c.Key != "help"))
                     host.WriteMessage("  " + command.Key + "\n");
-                host.ReadValue("Press <enter> key to show commands...");
+
+                PromptInteractiveOnly(host, "Press <enter> key to show commands...");
 
                 foreach (var command in processor.Commands)
                 {
                     if (command.Key != "help")
                     {
                         PrintCommand(host, command);
-                        host.ReadValue("Press <enter> key for next command...");
+                        PromptInteractiveOnly(host, "Press <enter> key for next command...");
                     }
                 }
             }
 
             return Task.FromResult<object>(null);
+        }
+
+        /// <summary>
+        /// Prompt user to press a key before continuing
+        /// </summary>
+        /// <param name="message">Message to display</param>
+        private static void PromptInteractiveOnly(IConsoleHost host, string message)
+        {
+            if (host.InteractiveMode)
+            {
+                host.ReadValue(message);
+            }
         }
 
         private void PrintCommand(IConsoleHost host, KeyValuePair<string, Type> pair)

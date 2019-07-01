@@ -7,6 +7,10 @@ namespace NConsole
         /// <param name="message">The message.</param>
         void WriteMessage(string message);
 
+        /// <summary>Writes a line to the console.</summary>
+        /// <param name="line">The line.</param>
+        void WriteLine(string line);
+
         /// <summary>Writes an error message.</summary>
         /// <param name="message">The message.</param>
         void WriteError(string message);
@@ -15,5 +19,8 @@ namespace NConsole
         /// <param name="message">The message.</param>
         /// <returns>The value.</returns>
         string ReadValue(string message);
+
+        /// <summary>Gets or sets a value indicating whether interactive mode is enabled (i.e. ReadValue() is allowed).</summary>
+        bool InteractiveMode { get; }
     }
 }

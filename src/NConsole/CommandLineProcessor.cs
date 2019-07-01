@@ -24,12 +24,15 @@ namespace NConsole
         /// <summary>Initializes a new instance of the <see cref="CommandLineProcessor" /> class.</summary>
         /// <param name="consoleHost">The command line host.</param>
         /// <param name="dependencyResolver">The dependency resolver.</param>
-        public CommandLineProcessor(IConsoleHost consoleHost, IDependencyResolver dependencyResolver = null)
+        public CommandLineProcessor(IConsoleHost consoleHost, IDependencyResolver dependencyResolver = null, bool registerDefaultHelpCommand = true)
         {
             _consoleHost = consoleHost;
             _dependencyResolver = dependencyResolver;
 
-            RegisterCommand<HelpCommand>("help");
+            if (registerDefaultHelpCommand)
+            {
+                RegisterCommand<HelpCommand>("help");
+            }
         }
 
         /// <summary>Gets the list of registered commands.</summary>
@@ -119,6 +122,19 @@ namespace NConsole
             return results;
         }
 
+        /// <summary>
+        /// Search for command type matching a command name.
+        /// </summary>
+        /// <param name="commandName">Name of the command to search for.</param>
+        /// <returns>The matching command, otherwise NULL.</returns>
+        private Type TryLookupCommandType(string commandName)
+        {
+            commandName = commandName.ToLowerInvariant();
+            Type commandType = null;
+            _commands.TryGetValue(commandName, out commandType);
+            return commandType;
+        }
+
         /// <summary>Processes the command in the given command line arguments.</summary>
         /// <param name="args">The arguments.</param>
         /// <param name="input">The input for the command.</param>
@@ -128,10 +144,11 @@ namespace NConsole
         public async Task<CommandResult> ProcessSingleAsync(string[] args, object input = null)
         {
             var usedArgs = new List<string>();
-            var commandName = GetCommandName(args);
-            if (_commands.ContainsKey(commandName))
+            GetCommandNameAndArguments(args, out string commandName, out IEnumerable<string> commandArguments);
+
+            var commandType = TryLookupCommandType(commandName);
+            if (commandType != null)
             {
-                var commandType = _commands[commandName];
                 var command = CreateCommand(commandType);
 
                 foreach (var property in commandType.GetRuntimeProperties())
@@ -148,18 +165,18 @@ namespace NConsole
                     }
                 }
 
-                if (usedArgs.Count != args.Length - 1)
+                if (usedArgs.Count != commandArguments.Count())
                 {
                     var unusedArgs = new List<string>();
-                    foreach (string arg in args)
+                    foreach (string arg in commandArguments)
                     {
-                        if (!usedArgs.Contains(arg) && !commandName.Equals(arg, StringComparison.OrdinalIgnoreCase))
+                        if (!usedArgs.Contains(arg))
                         {
                             unusedArgs.Add(arg);
                         }
                     }
 
-                    throw new UnusedArgumentException(string.Join(", ", unusedArgs));
+                    throw new UnusedArgumentException($"Used arguments ({usedArgs.Count}) != Provided arguments ({commandArguments.Count()}) -> Check [{string.Join(", ", unusedArgs)}]");
                 }
 
                 var output = await command.RunAsync(this, _consoleHost);
@@ -201,21 +218,41 @@ namespace NConsole
             }
         }
 
+        /// <summary>
+        /// Read the command name using console host if it was not provided by call.
+        /// </summary>
+        /// <returns>Command name input by user</returns>
+        private string ReadCommandNameInteractive()
+        {
+            _consoleHost.WriteMessage("Commands: \n");
+            foreach (var command in Commands)
+                _consoleHost.WriteMessage("  " + command.Key + "\n");
+
+            return _consoleHost.ReadValue("Command: ");
+        }
+
         /// <summary>Gets the name of the command to execute.</summary>
         /// <param name="args">The arguments.</param>
-        /// <returns>The command name.</returns>
-        protected string GetCommandName(string[] args)
+        protected void GetCommandNameAndArguments(string[] args, out string commandName, out IEnumerable<string> commandArguments)
         {
-            if (args.Length == 0 || args[0].Length == 0 || !char.IsLetter(args[0][0]))
+            commandName = string.Empty;
+            commandArguments = new List<string>();
+
+            bool hasArguments = (args.Length > 0) && (args[0].Length > 0) && (char.IsLetter(args[0][0]));
+            if (hasArguments)
             {
-                _consoleHost.WriteMessage("Commands: \n");
-                foreach (var command in Commands)
-                    _consoleHost.WriteMessage("  " + command.Key + "\n");
-
-                return _consoleHost.ReadValue("Command: ").ToLowerInvariant();
+                commandName = args[0];
+                commandArguments = args.Skip(1);
             }
-
-            return args[0].ToLowerInvariant();
+            else if (_consoleHost.InteractiveMode)
+            {
+                commandName = ReadCommandNameInteractive();
+                commandArguments = args;
+            }
+            else
+            {
+                throw new InvalidOperationException($"Could not retrieve command from arguments {string.Join(", ", args)}");
+            }
         }
 
         /// <exception cref="InvalidOperationException">No dependency resolver available to create a command without default constructor.</exception>

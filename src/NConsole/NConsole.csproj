@@ -6,7 +6,7 @@
     <VersionPrefix>3.12.6605.26941</VersionPrefix>
     <Authors>Rico Suter</Authors>
     <Copyright>Copyright © Rico Suter, 2016</Copyright>
-    <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.3;netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PlatformTarget>anycpu</PlatformTarget>
     <LangVersion>latest</LangVersion>
