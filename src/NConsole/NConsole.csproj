@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>NConsole is a .NET library to parse command line arguments and execute commands.</Description>
     <AssemblyTitle>NConsole</AssemblyTitle>
-    <VersionPrefix>3.12.6605.26941</VersionPrefix>
+    <VersionPrefix>3.13.6605.26941</VersionPrefix>
     <Authors>Rico Suter</Authors>
     <Copyright>Copyright © Rico Suter, 2016</Copyright>
     <TargetFrameworks>net45;netstandard1.3;netstandard2.0</TargetFrameworks>
