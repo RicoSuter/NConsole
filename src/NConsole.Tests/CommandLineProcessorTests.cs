@@ -8,6 +8,27 @@ namespace NConsole.Tests
     public class CommandLineProcessorTests
     {
         [Fact]
+        public void When_using_default_help_is_in_the_commands_list()
+        {
+            //// Arrange
+            var processor = new CommandLineProcessor(new ConsoleHost(), new MyDependencyResolver());
+
+            //// Assert
+            Assert.True(processor.Commands.ContainsKey("help"));
+        }
+
+        [Fact]
+        public void When_not_using_default_help_is_not_in_the_commands_list()
+        {
+            //// Arrange
+            var processor = new CommandLineProcessor(new ConsoleHost(), new MyDependencyResolver(), false);
+
+            //// Assert
+            Assert.False(processor.Commands.ContainsKey("help"));
+        }
+
+
+        [Fact]
         public void When_adding_a_command_then_the_command_is_in_the_commands_list()
         {
             //// Arrange

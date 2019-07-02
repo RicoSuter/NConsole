@@ -43,7 +43,7 @@ namespace NConsole.Tests
 
             //// Assert
             var exception = await Assert.ThrowsAsync<UnusedArgumentException>(async () => await ProcessAsyncThrowsException());
-            Assert.Equal("Unrecognised arguments are present: [12:13:14]", exception.Message);
+            Assert.Equal("Unrecognised arguments are present: [Used arguments (3) != Provided arguments (4) -> Check [12:13:14]]", exception.Message);
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace NConsole.Tests
 
             //// Assert
             var exception = await Assert.ThrowsAsync<UnusedArgumentException>(async () => await ProcessAsyncThrowsException());
-            Assert.Equal("Unrecognised arguments are present: [second, /third:third, /Fourth]", exception.Message);
+            Assert.Equal("Unrecognised arguments are present: [Used arguments (1) != Provided arguments (4) -> Check [second, /third:third, /Fourth]]", exception.Message);
         }
 
         public class MyArgumentCommand : IConsoleCommand
