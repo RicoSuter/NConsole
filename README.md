@@ -1,5 +1,7 @@
 # NConsole for .NET
 
+**This library is deprecated and should not be used anymore, use e.g. [Spectre.Console](https://spectreconsole.net/) instead.**
+
 [![Build status](https://ci.appveyor.com/api/projects/status/llcch712f3q1wswe?svg=true)](https://ci.appveyor.com/project/rsuter/nconsole)
 [![NuGet Version](https://badge.fury.io/nu/nconsole.svg)](https://www.nuget.org/packages/NConsole/)
 
